@@ -9,7 +9,13 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://furahura-travel.com'),
-  
+  // ▼▼▼ 追加: RSSフィードの場所を通知 ▼▼▼
+  alternates: {
+    types: {
+      'application/rss+xml': '/feed.xml',
+    },
+  },
+  // ▲▲▲ 追加ここまで ▲▲▲
   title: {
     template: '%s | ふらふら旅行記',
     default: 'ふらふら旅行記',

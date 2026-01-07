@@ -3,7 +3,9 @@ import { PriceComparison } from "@/components/PriceComparison";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import { Sidebar } from "@/components/Sidebar";
-import { ShareButtons } from "@/components/ShareButtons"; // ▼ 追加
+import { ShareButtons } from "@/components/ShareButtons";
+import { AffiliateDisclosure } from "@/components/AffiliateDisclosure"; // ▼ PR表記
+import { TableOfContents } from "@/components/TableOfContents"; // ▼ ハイライト目次
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -39,6 +41,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   };
 }
 
+// 静的パスの生成
 export async function generateStaticParams() {
   const { contents } = await getList();
   
@@ -66,21 +69,48 @@ export default async function BlogPost({ params, searchParams }: Props) {
     draftKey: isEnabled && draftKey ? draftKey : undefined,
   }).catch(() => null);
 
+  // 記事がない、またはカテゴリが一致しない場合は404
   if (!post || (!draftKey && post.category?.id !== categoryId)) {
     notFound();
   }
 
+  // 関連記事の取得
   const { contents: relatedPosts } = await getList({
     limit: 3,
     filters: `category[equals]${categoryId}[and]id[not_equals]${post.id}`,
   });
 
+  // ▼▼▼ JSON-LD（構造化データ）の生成 ▼▼▼
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://furahura-travel.com';
+  const cleanDescription = post.content.replace(/<[^>]+>/g, "").slice(0, 120) + "...";
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${baseUrl}/blog/${post.category?.id}/${post.id}`
+    },
+    headline: post.title,
+    image: post.eyecatch ? [post.eyecatch.url] : [],
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt || post.publishedAt,
+    author: {
+      '@type': 'Person',
+      name: 'ふらふら旅行記', 
+      url: `${baseUrl}/about`
+    },
+    description: cleanDescription,
+  };
+  // ▲▲▲ JSON-LD ここまで ▲▲▲
+
+  // 目次 (TOC) の生成とID付与
   const $ = cheerio.load(post.content);
   const headings = $("h2, h3").toArray();
   const toc: TocItem[] = headings.map((data) => {
     const text = $(data).text();
     const id = `heading-${headings.indexOf(data)}`;
-    $(data).attr("id", id);
+    $(data).attr("id", id); // 本文のHTMLタグにIDを埋め込む
     return {
       text,
       id,
@@ -93,12 +123,20 @@ export default async function BlogPost({ params, searchParams }: Props) {
   return (
     <main className="max-w-7xl mx-auto p-6">
       
+      {/* ▼▼▼ JSON-LD埋め込み ▼▼▼ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      {/* プレビューモード表示 */}
       {isEnabled && (
         <div className="bg-yellow-400 text-yellow-900 p-2 text-center text-sm font-bold mb-4 rounded">
           現在プレビューモードで表示しています
         </div>
       )}
 
+      {/* パンくずリスト */}
       <Breadcrumb 
         items={[
           { name: "TOP", path: "/" }, 
@@ -128,9 +166,12 @@ export default async function BlogPost({ params, searchParams }: Props) {
               )}
             </div>
             
-            {/* ▼ 追加: タイトル下のシェアボタン */}
+            {/* タイトル下のシェアボタン */}
             <ShareButtons title={post.title} id={post.id} categoryId={post.category?.id} />
           </div>
+
+          {/* ▼▼▼ PR表記 ▼▼▼ */}
+          <AffiliateDisclosure />
           
           {post.eyecatch && (
             <div className="mb-10 relative w-full h-64 md:h-96">
@@ -144,21 +185,14 @@ export default async function BlogPost({ params, searchParams }: Props) {
             </div>
           )}
 
+          {/* ▼▼▼ ハイライト付き目次 ▼▼▼ */}
           {toc.length > 0 && (
-            <div className="toc-box">
-              <p className="toc-title">目次</p>
-              <ul className="toc-list">
-                {toc.map((item) => (
-                  <li key={item.id} className={`toc-${item.tag}`}>
-                    <a href={`#${item.id}`}>
-                      {item.text}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+            <div className="mb-10">
+              <TableOfContents toc={toc} />
             </div>
           )}
 
+          {/* 本文 */}
           <div
             className="prose prose-lg dark:prose-invert max-w-none"
             dangerouslySetInnerHTML={{ __html: modifiedContent }}
@@ -168,7 +202,7 @@ export default async function BlogPost({ params, searchParams }: Props) {
              <p className="text-center font-bold mb-4 text-gray-800 dark:text-gray-200">
                この記事をシェアする
              </p>
-            {/* ▼ 追加: 記事読了後のシェアボタン（中央揃え） */}
+            {/* 記事読了後のシェアボタン（中央揃え） */}
             <div className="flex justify-center">
               <ShareButtons title={post.title} id={post.id} categoryId={post.category?.id} />
             </div>
