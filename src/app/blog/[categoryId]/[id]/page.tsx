@@ -3,13 +3,15 @@ import { PriceComparison } from "@/components/PriceComparison";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import { notFound } from "next/navigation";
-import { Metadata } from "next"; // ▼ 追加
+import { Metadata } from "next";
+import Image from "next/image";
+import * as cheerio from "cheerio";
 
 type Props = {
   params: Promise<{ categoryId: string; id: string }>;
 };
 
-// ▼ 追加: 記事ごとのメタデータ（タイトルなど）を生成
+// メタデータの生成
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const post = await getDetail(id).catch(() => null);
@@ -20,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: post.title,
-    description: `${post.title}についての解説記事です。`, // ※本来はMicroCMSにdescription項目を作って連携するのがベストです
+    description: `${post.title}についての解説記事です。`,
     openGraph: {
       title: post.title,
       description: `${post.title}についての解説記事です。`,
@@ -41,7 +43,13 @@ export async function generateStaticParams() {
     }));
 }
 
-// ページコンポーネント
+// 目次データの型定義
+type TocItem = {
+  text: string;
+  id: string;
+  tag: string;
+};
+
 export default async function BlogPost({ params }: Props) {
   const { categoryId, id } = await params;
   const post = await getDetail(id);
@@ -55,6 +63,22 @@ export default async function BlogPost({ params }: Props) {
     limit: 3,
     filters: `category[equals]${categoryId}[and]id[not_equals]${post.id}`,
   });
+
+  // ▼ 目次の生成処理
+  const $ = cheerio.load(post.content);
+  const headings = $("h2, h3").toArray();
+  const toc: TocItem[] = headings.map((data) => {
+    const text = $(data).text();
+    const id = `heading-${headings.indexOf(data)}`;
+    $(data).attr("id", id);
+    return {
+      text,
+      id,
+      tag: data.tagName,
+    };
+  });
+  
+  const modifiedContent = $.html();
 
   return (
     <main className="max-w-3xl mx-auto p-6">
@@ -81,22 +105,40 @@ export default async function BlogPost({ params }: Props) {
         )}
       </div>
       
-      {/* アイキャッチ画像があれば表示 */}
       {post.eyecatch && (
-        <div className="mb-10">
-          <img 
+        <div className="mb-10 relative w-full h-64 md:h-96">
+          <Image 
             src={post.eyecatch.url} 
             alt={post.title} 
-            className="w-full h-auto rounded-lg shadow-sm"
-            width={post.eyecatch.width}
-            height={post.eyecatch.height}
+            fill
+            className="object-cover rounded-lg shadow-sm"
+            priority 
           />
         </div>
       )}
-      
+
+      {/* ▼ 目次の表示エリア */}
+      {toc.length > 0 && (
+        <div className="toc-box">
+          <p className="toc-title">目次</p>
+          <ul className="toc-list">
+            {toc.map((item) => (
+              <li key={item.id} className={`toc-${item.tag}`}>
+                {/* シンプルにHTMLタグのみ。スタイルはCSS側で制御 */}
+                <a href={`#${item.id}`}>
+                  {item.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* 記事本文 */}
+      {/* prose-lg と dark:prose-invert で基本の文字色を制御 */}
       <div
         className="prose prose-lg dark:prose-invert max-w-none"
-        dangerouslySetInnerHTML={{ __html: post.content }}
+        dangerouslySetInnerHTML={{ __html: modifiedContent }}
       />
 
       <div className="mt-16">

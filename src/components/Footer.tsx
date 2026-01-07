@@ -6,8 +6,9 @@ export const Footer = () => {
       <div className="max-w-4xl mx-auto px-6 py-10">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           
+          {/* ▼ 修正: サイト名を変更 */}
           <div className="text-sm text-gray-500 dark:text-gray-400">
-            &copy; {new Date().getFullYear()} Travel Hack Blog
+            &copy; {new Date().getFullYear()} ふらふら旅行記
           </div>
 
           <nav className="flex flex-wrap gap-6 text-sm">

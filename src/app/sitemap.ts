@@ -1,18 +1,17 @@
 import { MetadataRoute } from 'next';
 import { getList } from '@/libs/microcms';
 
-export const revalidate = 3600; // 1時間に1回更新
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // 全記事を取得
   const { contents: posts } = await getList();
   
-  // サイトのベースURL（デプロイ先のURLが決まったら書き換えてください）
-  // 一旦 localhost または仮のURLにしておきます
-  const baseURL = process.env.NEXT_PUBLIC_BASE_URL || 'https://example.com';
+  // ▼ 修正: 決定したドメインを設定
+  const baseURL = process.env.NEXT_PUBLIC_BASE_URL || 'https://furahura-travel.com';
 
   const postUrls = posts.map((post) => ({
-    url: `${baseURL}/blog/${post.category?.id}/${post.id}`,
+    // カテゴリの有無チェック（安全策）
+    url: `${baseURL}/blog/${post.category?.id ?? 'misc'}/${post.id}`,
     lastModified: new Date(post.updatedAt || post.publishedAt),
     priority: 0.8,
   }));
