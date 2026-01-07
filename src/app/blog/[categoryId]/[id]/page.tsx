@@ -2,7 +2,8 @@ import { getDetail, getList } from "@/libs/microcms";
 import { PriceComparison } from "@/components/PriceComparison";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { RelatedPosts } from "@/components/RelatedPosts";
-import { Sidebar } from "@/components/Sidebar"; // ▼ 追加
+import { Sidebar } from "@/components/Sidebar";
+import { ShareButtons } from "@/components/ShareButtons"; // ▼ 追加
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -90,7 +91,6 @@ export default async function BlogPost({ params, searchParams }: Props) {
   const modifiedContent = $.html();
 
   return (
-    // ▼ 修正: max-w-3xl から 7xl に広げ、2カラムレイアウトに対応
     <main className="max-w-7xl mx-auto p-6">
       
       {isEnabled && (
@@ -99,7 +99,6 @@ export default async function BlogPost({ params, searchParams }: Props) {
         </div>
       )}
 
-      {/* パンくずリストは全幅で表示 */}
       <Breadcrumb 
         items={[
           { name: "TOP", path: "/" }, 
@@ -111,21 +110,26 @@ export default async function BlogPost({ params, searchParams }: Props) {
       <div className="flex flex-col lg:flex-row gap-10 mt-6">
         
         {/* ▼▼▼ 記事メインエリア (左側) ▼▼▼ */}
-        <article className="flex-1 min-w-0"> {/* min-w-0 は横はみ出し防止のおまじない */}
+        <article className="flex-1 min-w-0">
           
           <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">
             {post.title}
           </h1>
           
-          <div className="flex justify-end gap-4 text-sm text-gray-500 dark:text-gray-400 mb-8">
-            <time dateTime={post.publishedAt}>
-              公開: {new Date(post.publishedAt).toLocaleDateString()}
-            </time>
-            {post.updatedAt && (
-                <time dateTime={post.updatedAt}>
-                  更新: {new Date(post.updatedAt).toLocaleDateString()}
-                </time>
-            )}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400">
+              <time dateTime={post.publishedAt}>
+                公開: {new Date(post.publishedAt).toLocaleDateString()}
+              </time>
+              {post.updatedAt && (
+                  <time dateTime={post.updatedAt}>
+                    更新: {new Date(post.updatedAt).toLocaleDateString()}
+                  </time>
+              )}
+            </div>
+            
+            {/* ▼ 追加: タイトル下のシェアボタン */}
+            <ShareButtons title={post.title} id={post.id} categoryId={post.category?.id} />
           </div>
           
           {post.eyecatch && (
@@ -159,6 +163,16 @@ export default async function BlogPost({ params, searchParams }: Props) {
             className="prose prose-lg dark:prose-invert max-w-none"
             dangerouslySetInnerHTML={{ __html: modifiedContent }}
           />
+
+          <div className="mt-16 border-t border-gray-200 dark:border-gray-700 pt-8">
+             <p className="text-center font-bold mb-4 text-gray-800 dark:text-gray-200">
+               この記事をシェアする
+             </p>
+            {/* ▼ 追加: 記事読了後のシェアボタン（中央揃え） */}
+            <div className="flex justify-center">
+              <ShareButtons title={post.title} id={post.id} categoryId={post.category?.id} />
+            </div>
+          </div>
 
           <div className="mt-16">
             <h3 className="text-xl font-bold mb-6 border-b pb-2 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-700">

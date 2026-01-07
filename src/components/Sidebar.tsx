@@ -1,6 +1,7 @@
 import { getCategories } from "@/libs/microcms";
 import Image from "next/image";
 import Link from "next/link";
+import { SearchField } from "./SearchField"; // ▼ 追加
 
 export const Sidebar = async () => {
   const { contents: categories } = await getCategories().catch(() => ({ contents: [] }));
@@ -12,7 +13,7 @@ export const Sidebar = async () => {
         <div className="flex flex-col items-center">
           <div className="relative w-24 h-24 mb-4">
             <Image
-              src="/favicon.ico" // ※お好きな画像があれば差し替えてください
+              src="/favicon.ico" 
               alt="プロフィール画像"
               fill
               className="rounded-full object-cover border-2 border-gray-100 dark:border-slate-600"
@@ -27,6 +28,9 @@ export const Sidebar = async () => {
           </p>
         </div>
       </div>
+
+      {/* ▼ 追加: 検索窓 */}
+      <SearchField />
 
       {/* カテゴリ一覧 */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 shadow-sm">

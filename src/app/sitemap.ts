@@ -1,37 +1,52 @@
 import { MetadataRoute } from 'next';
-import { getList } from '@/libs/microcms';
-
-export const revalidate = 3600;
+import { getList, getCategories } from '@/libs/microcms';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { contents: posts } = await getList();
-  
-  // ▼ 修正: 決定したドメインを設定
-  const baseURL = process.env.NEXT_PUBLIC_BASE_URL || 'https://furahura-travel.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://furahura-travel.com';
 
+  // 1. 全記事を取得 (limitを大きくして全件取得する設定)
+  const { contents: posts } = await getList({ limit: 100 });
+  
+  // 2. 全カテゴリを取得
+  const { contents: categories } = await getCategories({ limit: 100 });
+
+  // 3. 記事ページのURLを生成
   const postUrls = posts.map((post) => ({
-    // カテゴリの有無チェック（安全策）
-    url: `${baseURL}/blog/${post.category?.id ?? 'misc'}/${post.id}`,
-    lastModified: new Date(post.updatedAt || post.publishedAt),
+    url: `${baseUrl}/blog/${post.category?.id}/${post.id}`,
+    lastModified: new Date(post.updatedAt),
+    changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
 
+  // 4. カテゴリページのURLを生成
+  const categoryUrls = categories.map((category) => ({
+    url: `${baseUrl}/blog/${category.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.5,
+  }));
+
+  // 5. 静的ページと合わせて返す
   return [
     {
-      url: baseURL,
+      url: baseUrl,
       lastModified: new Date(),
-      priority: 1.0,
+      changeFrequency: 'daily',
+      priority: 1,
     },
     {
-      url: `${baseURL}/about`,
+      url: `${baseUrl}/contact`,
       lastModified: new Date(),
-      priority: 0.5,
+      changeFrequency: 'monthly',
+      priority: 0.3,
     },
     {
-      url: `${baseURL}/contact`,
+      url: `${baseUrl}/privacy`,
       lastModified: new Date(),
-      priority: 0.5,
+      changeFrequency: 'monthly',
+      priority: 0.1,
     },
+    ...categoryUrls,
     ...postUrls,
   ];
 }
