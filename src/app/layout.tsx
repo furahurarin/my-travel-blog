@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/Header"; // ヘッダーを読み込み
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,10 +18,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body className={inter.className}>
-        {/* 全ページ共通のヘッダーを表示 */}
+      <body className={`${inter.className} bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-50 flex flex-col min-h-screen`}>
         <Header />
-        {children}
+        
+        {/* コンテンツが少ない時もフッターを下に押し下げるためのラッパー */}
+        <div className="flex-grow">
+          {children}
+        </div>
+        
+        <Footer />
       </body>
     </html>
   );
