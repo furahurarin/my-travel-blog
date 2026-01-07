@@ -3,11 +3,11 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { GoogleAnalytics } from '@next/third-parties/google'; // ▼ 追加
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  // ▼ 修正: 決定したドメインを設定
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://furahura-travel.com'),
   
   title: {
@@ -38,6 +38,11 @@ export default function RootLayout({
           {children}
         </div>
         <Footer />
+        
+        {/* ▼ 追加: Googleアナリティクス (IDが設定されている時のみ有効) */}
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
       </body>
     </html>
   );
