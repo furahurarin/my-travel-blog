@@ -2,56 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 教科書通りの設定：
-  デフォルトの :root 変数はすべて削除し、Tailwindに一任します。
-*/
+@layer base {
+  body {
+    @apply bg-white text-gray-900;
+    @apply dark:bg-slate-900 dark:text-slate-100;
+  }
+}
 
 @layer components {
-  /* ▼ 目次 (TOC) のデザイン */
+  /* 記事内の引用ブロック */
+  .prose blockquote {
+    @apply bg-slate-100 border-l-4 border-blue-500 rounded-lg p-6 my-8 not-italic text-slate-700 shadow-sm;
+    @apply dark:bg-slate-800 dark:border-blue-400 dark:text-slate-300 dark:shadow-none;
+  }
+  
+  .prose blockquote p:first-of-type::before { content: none; }
+  .prose blockquote p:last-of-type::after { content: none; }
+
+  /* ▼ 目次 (TOC) */
   .toc-box {
     @apply bg-gray-50 border border-gray-200 rounded-lg p-6 mb-10 text-gray-800;
     @apply dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100;
   }
-  
-  .toc-title {
-    @apply font-bold text-center text-lg mb-4;
+  .toc-title { @apply font-bold text-center text-lg mb-4; }
+  .toc-list { @apply list-none p-0 m-0 space-y-2; }
+  .toc-list a {
+    @apply text-gray-700 hover:text-blue-600 transition-colors;
+    @apply dark:text-gray-300 dark:hover:text-blue-400;
   }
+  .toc-h3 { @apply ml-4 text-sm; }
 
-  .toc-list {
-    @apply list-none p-0 m-0 space-y-2;
-  }
-
-  .toc-h2 a {
-    @apply text-base font-semibold text-gray-700 hover:text-blue-600 hover:underline transition-colors;
-    @apply dark:text-gray-200 dark:hover:text-blue-400;
-  }
-
-  .toc-h3 {
-    @apply ml-6;
-  }
-
-  .toc-h3 a {
-    @apply text-sm text-gray-600 hover:text-blue-600 hover:underline transition-colors;
-    @apply dark:text-gray-400 dark:hover:text-blue-400;
-  }
-
-  /* ▼ ポイントボックス (青) */
+  /* ▼ ポイント・注意ボックス */
   .info-box {
     @apply relative bg-blue-50 border-2 border-blue-200 rounded-lg p-6 my-8 text-blue-900;
-    @apply dark:bg-blue-950/30 dark:border-blue-800 dark:text-blue-100;
+    @apply dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-100;
   }
-  
   .info-box::before {
     content: "POINT";
     @apply absolute -top-3 left-4 bg-blue-500 text-white text-xs font-bold px-3 py-0.5 rounded-full;
   }
 
-  /* ▼ 注意ボックス (赤) */
   .alert-box {
     @apply relative bg-red-50 border-2 border-red-200 rounded-lg p-6 my-8 text-red-900;
-    @apply dark:bg-red-950/30 dark:border-red-800 dark:text-red-100;
+    @apply dark:bg-red-900/30 dark:border-red-800 dark:text-red-100;
   }
-
   .alert-box::before {
     content: "ATTENTION";
     @apply absolute -top-3 left-4 bg-red-500 text-white text-xs font-bold px-3 py-0.5 rounded-full;
