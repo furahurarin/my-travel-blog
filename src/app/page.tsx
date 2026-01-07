@@ -2,93 +2,133 @@ import { getList } from "@/libs/microcms";
 import Link from "next/link";
 import Image from "next/image";
 import { Sidebar } from "@/components/Sidebar";
-import { Pagination } from "@/components/Pagination";
+import { TopSlider } from "@/components/TopSlider";
 
-// 1ページあたりの表示件数
-const LIMIT = 6;
+// ▼▼▼ あなたのMicroCMSのカテゴリIDを設定してください ▼▼▼
+const CATEGORY_SECTIONS = [
+  { id: "hokuriku-tokyo", title: "🚄 北陸⇔東京の移動手段", subtitle: "新幹線・飛行機・バスを徹底比較" },
+  { id: "hotel-tips", title: "🏨 賢いホテル選び", subtitle: "失敗しない宿選びと予約のコツ" },
+  { id: "cards-insurance", title: "💳 クレカ・旅行保険", subtitle: "旅をお得に、安心にする一枚" },
+];
 
-type Props = {
-  searchParams: Promise<{ page?: string }>;
-};
+export default async function Home() {
+  // 1. スライダー用の記事を取得（最新5件）
+  const sliderData = await getList({ limit: 5 });
 
-export default async function Home({ searchParams }: Props) {
-  const { page } = await searchParams;
-  const current = parseInt(page ?? "1", 10);
-
-  const { contents, totalCount } = await getList({
-    limit: LIMIT,
-    offset: (current - 1) * LIMIT,
-  });
+  // 2. 各カテゴリごとの記事を並列で取得
+  const categoryPostsPromises = CATEGORY_SECTIONS.map((cat) =>
+    getList({
+      limit: 3,
+      filters: `category[equals]${cat.id}`,
+    })
+  );
+  
+  const categoryPostsResults = await Promise.all(categoryPostsPromises);
 
   return (
-    <main className="max-w-7xl mx-auto p-6">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       
-      {/* ▼▼▼ SEO用ヘッダー (sr-onlyクラスで視覚的に隠す) ▼▼▼ */}
-      {/* Googleには「これがサイトの主題です」と伝わるが、画面には一切表示されない */}
       <h1 className="sr-only">ふらふら旅行記 - 北陸から東京への賢い移動と旅のノウハウ</h1>
 
-      <div className="flex flex-col lg:flex-row gap-10">
+      {/* メインビジュアル：人気記事スライダー */}
+      <TopSlider contents={sliderData.contents} />
+
+      <div className="flex flex-col lg:flex-row gap-12">
         
-        {/* メインエリア */}
-        <div className="flex-1">
+        {/* メインコンテンツエリア */}
+        <div className="flex-1 space-y-16">
           
-          {/* いきなり記事一覧の見出しからスタート */}
-          <div className="flex items-center gap-3 mb-6 pb-2 border-b border-gray-100 dark:border-gray-800">
-             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-               最新記事
-             </h2>
-             <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-               New Posts
-             </span>
-          </div>
+          {CATEGORY_SECTIONS.map((cat, index) => {
+            const posts = categoryPostsResults[index].contents;
+            if (posts.length === 0) return null;
 
-          {/* 記事一覧 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {contents.map((post) => (
-              <Link 
-                key={post.id} 
-                href={`/blog/${post.category?.id}/${post.id}`}
-                className="group flex flex-col h-full bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="relative w-full h-48 overflow-hidden">
-                  <Image
-                    src={post.eyecatch?.url ?? "/no-image.png"}
-                    alt={post.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute top-3 left-3 bg-brand-600 text-white text-xs font-bold px-2 py-1 rounded shadow-md">
-                    {post.category?.name}
+            return (
+              <section key={cat.id}>
+                {/* セクション見出し */}
+                <div className="flex items-end justify-between mb-6 pb-2 border-b border-gray-200 dark:border-gray-700">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                      {cat.title}
+                    </h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {cat.subtitle}
+                    </p>
                   </div>
+                  <Link 
+                    href={`/blog/${cat.id}`} 
+                    className="hidden sm:inline-block text-sm font-bold text-brand-600 hover:text-brand-800 transition-colors"
+                  >
+                    もっと見る →
+                  </Link>
                 </div>
-                <div className="p-5 flex flex-col flex-grow">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-brand-600 transition-colors leading-snug">
-                    {post.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2 flex-grow">
-                    {post.content.replace(/<[^>]+>/g, "").slice(0, 80)}...
-                  </p>
-                  <div className="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                    <time>
-                      {new Date(post.publishedAt).toLocaleDateString()}
-                    </time>
-                    <span className="group-hover:translate-x-1 transition-transform">
-                      続きを読む →
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
 
-          <Pagination 
-            totalCount={totalCount} 
-            current={current} 
-            basePath="/" 
-            limit={LIMIT} 
-          />
+                {/* 記事カードリスト */}
+                <div className="space-y-6">
+                  {posts.map((post) => (
+                    <Link 
+                      key={post.id} 
+                      href={`/blog/${post.category?.id}/${post.id}`}
+                      className="group flex flex-col sm:flex-row bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-card-hover border border-gray-100 dark:border-slate-700 overflow-hidden transition-all duration-300"
+                    >
+                      {/* サムネイル */}
+                      <div className="relative w-full sm:w-48 h-48 sm:h-auto shrink-0 overflow-hidden">
+                        <Image
+                          src={post.eyecatch?.url ?? "/no-image.png"}
+                          alt={post.title}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                      </div>
+                      
+                      {/* テキスト情報 */}
+                      <div className="p-5 flex flex-col justify-center flex-grow">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-brand-600 transition-colors leading-snug">
+                          {post.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
+                          {post.content.replace(/<[^>]+>/g, "").slice(0, 60)}...
+                        </p>
+                        <div className="text-xs text-gray-400 flex items-center gap-2 mt-auto">
+                          {/* ▼▼▼ 修正: "ja-JP" を指定 ▼▼▼ */}
+                          <time>{new Date(post.publishedAt).toLocaleDateString("ja-JP")}</time>
+                          <span className="text-brand-500 font-medium">続きを読む</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+
+                {/* スマホ用「もっと見る」ボタン */}
+                <div className="mt-4 sm:hidden text-center">
+                  <Link 
+                    href={`/blog/${cat.id}`} 
+                    className="inline-block w-full py-2 text-sm font-bold text-brand-600 border border-brand-200 rounded-lg bg-brand-50"
+                  >
+                    {cat.title}をもっと見る
+                  </Link>
+                </div>
+              </section>
+            );
+          })}
+
+          {/* 全記事一覧へのリンク */}
+          <div className="p-8 bg-gray-50 dark:bg-slate-900 rounded-2xl text-center border border-dashed border-gray-300 dark:border-gray-700">
+             <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">
+               もっと記事を探す
+             </h3>
+             <p className="text-sm text-gray-500 mb-6">
+               すべての記事を新着順でチェックできます
+             </p>
+             <Link 
+               href="/blog/all"
+               className="inline-block bg-brand-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-brand-700 hover:-translate-y-1 transition-all"
+             >
+               新着記事一覧へ
+             </Link>
+          </div>
         </div>
 
+        {/* サイドバー */}
         <Sidebar />
       </div>
     </main>

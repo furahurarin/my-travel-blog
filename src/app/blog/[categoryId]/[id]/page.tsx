@@ -4,8 +4,8 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import { Sidebar } from "@/components/Sidebar";
 import { ShareButtons } from "@/components/ShareButtons";
-import { AffiliateDisclosure } from "@/components/AffiliateDisclosure"; // ▼ PR表記
-import { TableOfContents } from "@/components/TableOfContents"; // ▼ ハイライト目次
+import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { TableOfContents } from "@/components/TableOfContents";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -69,18 +69,15 @@ export default async function BlogPost({ params, searchParams }: Props) {
     draftKey: isEnabled && draftKey ? draftKey : undefined,
   }).catch(() => null);
 
-  // 記事がない、またはカテゴリが一致しない場合は404
   if (!post || (!draftKey && post.category?.id !== categoryId)) {
     notFound();
   }
 
-  // 関連記事の取得
   const { contents: relatedPosts } = await getList({
     limit: 3,
     filters: `category[equals]${categoryId}[and]id[not_equals]${post.id}`,
   });
 
-  // ▼▼▼ JSON-LD（構造化データ）の生成 ▼▼▼
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://furahura-travel.com';
   const cleanDescription = post.content.replace(/<[^>]+>/g, "").slice(0, 120) + "...";
 
@@ -102,15 +99,13 @@ export default async function BlogPost({ params, searchParams }: Props) {
     },
     description: cleanDescription,
   };
-  // ▲▲▲ JSON-LD ここまで ▲▲▲
 
-  // 目次 (TOC) の生成とID付与
   const $ = cheerio.load(post.content);
   const headings = $("h2, h3").toArray();
   const toc: TocItem[] = headings.map((data) => {
     const text = $(data).text();
     const id = `heading-${headings.indexOf(data)}`;
-    $(data).attr("id", id); // 本文のHTMLタグにIDを埋め込む
+    $(data).attr("id", id);
     return {
       text,
       id,
@@ -122,21 +117,17 @@ export default async function BlogPost({ params, searchParams }: Props) {
 
   return (
     <main className="max-w-7xl mx-auto p-6">
-      
-      {/* ▼▼▼ JSON-LD埋め込み ▼▼▼ */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* プレビューモード表示 */}
       {isEnabled && (
         <div className="bg-yellow-400 text-yellow-900 p-2 text-center text-sm font-bold mb-4 rounded">
           現在プレビューモードで表示しています
         </div>
       )}
 
-      {/* パンくずリスト */}
       <Breadcrumb 
         items={[
           { name: "TOP", path: "/" }, 
@@ -147,7 +138,7 @@ export default async function BlogPost({ params, searchParams }: Props) {
 
       <div className="flex flex-col lg:flex-row gap-10 mt-6">
         
-        {/* ▼▼▼ 記事メインエリア (左側) ▼▼▼ */}
+        {/* メインエリア */}
         <article className="flex-1 min-w-0">
           
           <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">
@@ -156,21 +147,20 @@ export default async function BlogPost({ params, searchParams }: Props) {
           
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400">
+              {/* ▼▼▼ 修正: "ja-JP" を指定 ▼▼▼ */}
               <time dateTime={post.publishedAt}>
-                公開: {new Date(post.publishedAt).toLocaleDateString()}
+                公開: {new Date(post.publishedAt).toLocaleDateString("ja-JP")}
               </time>
               {post.updatedAt && (
                   <time dateTime={post.updatedAt}>
-                    更新: {new Date(post.updatedAt).toLocaleDateString()}
+                    更新: {new Date(post.updatedAt).toLocaleDateString("ja-JP")}
                   </time>
               )}
             </div>
             
-            {/* タイトル下のシェアボタン */}
             <ShareButtons title={post.title} id={post.id} categoryId={post.category?.id} />
           </div>
 
-          {/* ▼▼▼ PR表記 ▼▼▼ */}
           <AffiliateDisclosure />
           
           {post.eyecatch && (
@@ -185,14 +175,12 @@ export default async function BlogPost({ params, searchParams }: Props) {
             </div>
           )}
 
-          {/* ▼▼▼ ハイライト付き目次 ▼▼▼ */}
           {toc.length > 0 && (
             <div className="mb-10">
               <TableOfContents toc={toc} />
             </div>
           )}
 
-          {/* 本文 */}
           <div
             className="prose prose-lg dark:prose-invert max-w-none"
             dangerouslySetInnerHTML={{ __html: modifiedContent }}
@@ -202,7 +190,6 @@ export default async function BlogPost({ params, searchParams }: Props) {
              <p className="text-center font-bold mb-4 text-gray-800 dark:text-gray-200">
                この記事をシェアする
              </p>
-            {/* 記事読了後のシェアボタン（中央揃え） */}
             <div className="flex justify-center">
               <ShareButtons title={post.title} id={post.id} categoryId={post.category?.id} />
             </div>
@@ -218,7 +205,7 @@ export default async function BlogPost({ params, searchParams }: Props) {
           <RelatedPosts posts={relatedPosts} />
         </article>
 
-        {/* ▼▼▼ サイドバー (右側) ▼▼▼ */}
+        {/* サイドバー */}
         <Sidebar />
       </div>
     </main>

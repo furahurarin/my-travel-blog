@@ -21,9 +21,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 export default async function SearchPage({ searchParams }: Props) {
   const { q } = await searchParams;
 
-  // 検索クエリがある場合のみMicroCMSに問い合わせる
   const { contents: posts } = q 
-    ? await getList({ q: q }) // MicroCMSの全文検索機能を使用
+    ? await getList({ q: q }) 
     : { contents: [] };
 
   return (
@@ -67,8 +66,9 @@ export default async function SearchPage({ searchParams }: Props) {
                     <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
                       {post.title}
                     </h2>
+                    {/* ▼▼▼ 修正: "ja-JP" を指定 ▼▼▼ */}
                     <time className="text-sm text-gray-500 dark:text-gray-400 mt-auto">
-                      {new Date(post.publishedAt).toLocaleDateString()}
+                      {new Date(post.publishedAt).toLocaleDateString("ja-JP")}
                     </time>
                   </div>
                 </Link>

@@ -26,7 +26,8 @@ export const RelatedPosts = ({ posts }: Props) => {
                 {post.title}
               </h4>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {new Date(post.publishedAt).toLocaleDateString()}
+                {/* ▼▼▼ 修正: "ja-JP" を指定 ▼▼▼ */}
+                {new Date(post.publishedAt).toLocaleDateString("ja-JP")}
               </p>
             </div>
           </Link>

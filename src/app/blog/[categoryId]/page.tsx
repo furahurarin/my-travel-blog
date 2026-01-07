@@ -2,7 +2,7 @@ import { getList } from "@/libs/microcms";
 import Link from "next/link";
 import Image from "next/image";
 import { Sidebar } from "@/components/Sidebar";
-import { Pagination } from "@/components/Pagination"; // ▼ 追加
+import { Pagination } from "@/components/Pagination";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -50,9 +50,6 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     notFound();
   }
   
-  // カテゴリ名は1件目の記事などから取るか、別途取得するが、ここでは簡易的に処理
-  // (postsが空の場合のケアが必要だが、MicroCMSはカテゴリ情報だけを取得するAPI呼び出しが別途必要なため、
-  //  ここでは既存の記事から名前を取るアプローチを継続。空の場合はヘッダーだけ表示)
   const categoryName = posts[0]?.category?.name ?? "Category";
 
   return (
@@ -90,15 +87,15 @@ export default async function CategoryPage({ params, searchParams }: Props) {
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2 flex-grow">
                     {post.content.replace(/<[^>]+>/g, "").slice(0, 50)}...
                   </p>
+                  {/* ▼▼▼ 修正: "ja-JP" を指定 ▼▼▼ */}
                   <time className="text-sm text-gray-500 dark:text-gray-400 mt-auto">
-                    {new Date(post.publishedAt).toLocaleDateString()}
+                    {new Date(post.publishedAt).toLocaleDateString("ja-JP")}
                   </time>
                 </div>
               </Link>
             ))}
           </div>
 
-          {/* ▼ 追加: ページネーション */}
           <Pagination 
             totalCount={totalCount} 
             current={current} 
