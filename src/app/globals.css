@@ -8,55 +8,77 @@ html {
 
 body {
   @apply bg-gray-50 text-gray-900;
-  font-feature-settings: "palt"; /* 文字詰めを有効化 */
+  font-feature-settings: "palt"; /* 文字詰めを有効化（日本語が読みやすくなります） */
 }
 
 ::selection {
-  background-color: #0055a4;
+  background-color: #0055a4; /* 選択時の色（青系） */
   color: #ffffff;
 }
 
 img {
-  background-color: #f3f4f6;
+  background-color: #f3f4f6; /* 画像読み込み中の背景色 */
 }
 
 @layer components {
-  /* ダークモード記述を除去してクリーンに */
+  /* ----------------------------------------------------
+     MicroCMS リッチエディタ用スタイル
+  ---------------------------------------------------- */
+  
+  /* 引用（Blockquote） */
   .prose blockquote {
     @apply bg-brand-50 border-l-4 border-brand-500 rounded-lg p-6 my-8 not-italic text-gray-700 shadow-sm;
   }
-  
   .prose blockquote p:first-of-type::before { content: none; }
   .prose blockquote p:last-of-type::after { content: none; }
 
+  /* ----------------------------------------------------
+     目次（TOC）スタイル
+  ---------------------------------------------------- */
   .toc-box {
     @apply bg-white border border-gray-200 rounded-lg p-6 mb-10 text-gray-800 shadow-sm;
   }
   .toc-title { @apply font-bold text-center text-lg mb-4; }
   .toc-list { @apply list-none p-0 m-0 space-y-2; }
   .toc-list a {
-    @apply text-gray-700 hover:text-brand-600 transition-colors;
+    @apply text-gray-700 hover:text-brand-600 transition-colors underline-offset-4 decoration-brand-200;
   }
-  .toc-h3 { @apply ml-4 text-sm; }
+  .toc-h3 { @apply ml-4 text-sm text-gray-600; }
 
+  /* ----------------------------------------------------
+     囲み枠（Info / Alert）
+  ---------------------------------------------------- */
+  
+  /* ポイント（青・ブランド色系） */
   .info-box {
     @apply relative bg-brand-50 border-2 border-brand-200 rounded-lg p-6 my-8 text-brand-900;
   }
   .info-box::before {
     content: "POINT";
-    @apply absolute -top-3 left-4 bg-brand-500 text-white text-xs font-bold px-3 py-0.5 rounded-full;
+    @apply absolute -top-3 left-4 bg-brand-500 text-white text-xs font-bold px-3 py-0.5 rounded-full shadow-sm;
   }
 
+  /* 注意（赤系） */
   .alert-box {
     @apply relative bg-red-50 border-2 border-red-200 rounded-lg p-6 my-8 text-red-900;
   }
   .alert-box::before {
     content: "ATTENTION";
-    @apply absolute -top-3 left-4 bg-red-500 text-white text-xs font-bold px-3 py-0.5 rounded-full;
+    @apply absolute -top-3 left-4 bg-red-500 text-white text-xs font-bold px-3 py-0.5 rounded-full shadow-sm;
+  }
+
+  /* ----------------------------------------------------
+     ボタン風リンク（MicroCMS本文内で使用）
+  ---------------------------------------------------- */
+  .rich-text-btn {
+    @apply inline-block bg-orange-500 text-white font-bold py-3 px-8 rounded-full shadow-md transition-transform hover:bg-orange-600 hover:-translate-y-0.5 text-center no-underline my-4;
   }
 }
 
 @layer utilities {
+  /* ----------------------------------------------------
+     外部リンクアイコン（別タブで開くリンクに自動付与）
+  ---------------------------------------------------- */
   .prose a[target="_blank"]::after {
     content: "";
     display: inline-block;
@@ -68,5 +90,43 @@ img {
     background-repeat: no-repeat;
     background-size: contain;
     opacity: 0.7;
+  }
+
+  /* ----------------------------------------------------
+     蛍光ペン風マーカー（今回の追加分）
+  ---------------------------------------------------- */
+  /* 黄色マーカー */
+  .marker-yellow {
+    background: linear-gradient(transparent 60%, #ffff66 60%);
+    font-weight: bold;
+    padding-left: 0.1em;
+    padding-right: 0.1em;
+  }
+  
+  /* ピンクマーカー */
+  .marker-pink {
+    background: linear-gradient(transparent 60%, #ffccff 60%);
+    font-weight: bold;
+    padding-left: 0.1em;
+    padding-right: 0.1em;
+  }
+
+  /* ----------------------------------------------------
+     テーブルのスタイル調整（今回の追加分）
+     Tailwind Typography (prose) がテーブルに余計なマージンをつけるのを防ぐ
+  ---------------------------------------------------- */
+  .prose table {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    font-size: 0.95em;
+  }
+  /* ヘッダーの文字配置を強制的に左寄せ（数字が見やすくなる） */
+  .prose thead th {
+    text-align: left;
+  }
+  /* セル内の余白調整 */
+  .prose td, .prose th {
+    padding-top: 0.75em;
+    padding-bottom: 0.75em;
   }
 }

@@ -3,28 +3,34 @@ import { redirect } from 'next/navigation';
 import { getDetail } from '@/libs/microcms';
 
 export async function GET(request: Request) {
+  // URLクエリパラメータから id と draftKey を取得
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
   const draftKey = searchParams.get('draftKey');
 
+  // パラメータが不足している場合はエラー
   if (!id || !draftKey) {
-    return new Response('Missing parameters', { status: 400 });
+    return new Response('Missing id or draftKey', { status: 400 });
   }
 
-  // 下書き記事を取得して、存在する確認＆カテゴリIDを取得
-  const post = await getDetail(id, {
-    draftKey,
-  }).catch(() => null);
+  // MicroCMSから下書きデータを取得して検証
+  // ※getDetail内部で endpoint: "blogs" が使われます
+  const post = await getDetail(id, { draftKey }).catch(() => null);
 
+  // 記事が見つからない（draftKeyが無効など）場合はエラー
   if (!post) {
-    return new Response('Invalid slug', { status: 401 });
+    return new Response('Invalid draft key or content ID', { status: 401 });
   }
 
-  // Next.jsのドラフトモードを有効にする（これでキャッシュが無効になります）
-  const draft = await draftMode();
-  draft.enable();
+  // Draft Modeを有効化（Cookieを設定）
+  draftMode().enable();
 
-  // 記事ページへリダイレクト（draftKeyをURLにつけて渡す）
-  const categoryId = post.category?.id ?? 'misc'; // カテゴリがない場合はmiscへ
+  // リダイレクト先のパスを作成
+  // URL構造: /blog/[categoryId]/[id]
+  // カテゴリがない場合のフォールバックも念のため記述
+  const categoryId = post.category?.id ?? 'misc';
+  
+  // 取得した記事ページへリダイレクト
+  // draftKeyをクエリに含めることで、リダイレクト先でも下書き取得ができるようにする
   redirect(`/blog/${categoryId}/${post.id}?draftKey=${draftKey}`);
 }

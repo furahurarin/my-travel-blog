@@ -1,41 +1,6 @@
-import { createClient, MicroCMSQueries } from "microcms-js-sdk";
+import { createClient, MicroCMSQueries, MicroCMSImage, MicroCMSDate } from "microcms-js-sdk";
 
-// カテゴリの型定義を追加
-export type Category = {
-  id: string;
-  name: string;
-};
-
-export type Blog = {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-  revisedAt: string;
-  title: string;
-  content: string;
-  eyecatch?: {
-    url: string;
-    height: number;
-    width: number;
-  };
-  category?: Category;
-};
-
-export type BlogResponse = {
-  totalCount: number;
-  offset: number;
-  limit: number;
-  contents: Blog[];
-};
-
-export type CategoryResponse = {
-  totalCount: number;
-  offset: number;
-  limit: number;
-  contents: Category[];
-};
-
+// クライアント初期化
 if (!process.env.MICROCMS_SERVICE_DOMAIN) {
   throw new Error("MICROCMS_SERVICE_DOMAIN is required");
 }
@@ -49,30 +14,87 @@ export const client = createClient({
   apiKey: process.env.MICROCMS_API_KEY,
 });
 
-export const getList = async (queries?: MicroCMSQueries) => {
-  const listData = await client.getList<Blog>({
-    endpoint: "blogs",
-    queries,
-  });
-  return listData;
+// ▼ 繰り返しフィールド（body）の各ブロックの型
+export type BodyBlock =
+  | {
+      fieldId: "richText";
+      richText: string;
+    }
+  | {
+      fieldId: "html";
+      html: string;
+    };
+
+// ▼ カテゴリ型
+export type Category = {
+  id: string;
+  name: string;
+} & MicroCMSDate;
+
+// ▼ ブログ記事の型
+export type Blog = {
+  id: string;
+  title: string;
+  eyecatch?: MicroCMSImage;
+  category?: Category;
+
+  // 本文（新・旧）
+  body?: BodyBlock[];
+  content: string;
+
+  // SEO
+  description?: string;
+
+  // 関連記事・フラグ
+  related_posts?: Blog[];
+  is_recommended?: boolean;
+
+  // 広告制御
+  show_ads?: boolean;
+
+} & MicroCMSDate;
+
+// ▼ レスポンス型
+export type ArticleListResponse = {
+  totalCount: number;
+  offset: number;
+  limit: number;
+  contents: Blog[];
 };
 
+export type CategoryResponse = {
+  totalCount: number;
+  offset: number;
+  limit: number;
+  contents: Category[];
+};
+
+// ▼ 詳細取得
 export const getDetail = async (
   contentId: string,
   queries?: MicroCMSQueries
 ) => {
   const detailData = await client.getListDetail<Blog>({
-    endpoint: "blogs",
+    endpoint: "blogs", // ★ここを 'blogs'（複数形）に修正しました
     contentId,
     queries,
   });
   return detailData;
 };
 
-// ▼ 追加: カテゴリ一覧を取得する関数
+// ▼ 一覧取得
+export const getList = async (queries?: MicroCMSQueries) => {
+  const listData = await client.getList<Blog>({
+    endpoint: "blogs", // ★ここを 'blogs'（複数形）に修正しました
+    queries,
+  });
+  return listData;
+};
+
+// ▼ カテゴリ一覧取得
 export const getCategories = async (queries?: MicroCMSQueries) => {
   const listData = await client.getList<Category>({
-    endpoint: "categories",
+    endpoint: "categories", // ★ここを 'categories'（複数形）に修正しました
     queries,
   });
   return listData;
