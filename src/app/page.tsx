@@ -89,8 +89,8 @@ export default async function Home() {
                           {post.content.replace(/<[^>]+>/g, "").slice(0, 60)}...
                         </p>
                         <div className="text-xs text-gray-400 flex items-center gap-2 mt-auto">
-                          {/* ▼▼▼ 修正: "ja-JP" を指定 ▼▼▼ */}
-                          <time>{new Date(post.publishedAt).toLocaleDateString("ja-JP")}</time>
+                          {/* ▼▼▼ 修正: publishedAtが無い場合はcreatedAtを使う安全策を追加 ▼▼▼ */}
+                          <time>{new Date(post.publishedAt || post.createdAt).toLocaleDateString("ja-JP")}</time>
                           <span className="text-brand-500 font-medium">続きを読む</span>
                         </div>
                       </div>
