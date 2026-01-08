@@ -1,58 +1,35 @@
 import { getCategories } from "@/libs/microcms";
 import Image from "next/image";
 import Link from "next/link";
-import { SearchField } from "./SearchField"; // ▼ 追加
+import { SearchField } from "./SearchField";
 
 export const Sidebar = async () => {
   const { contents: categories } = await getCategories().catch(() => ({ contents: [] }));
 
   return (
-    <aside className="w-full lg:w-80 flex flex-col gap-8">
-      {/* プロフィールカード */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 shadow-sm">
-        <div className="flex flex-col items-center">
-          <div className="relative w-24 h-24 mb-4">
-            <Image
-              src="/favicon.ico" 
-              alt="プロフィール画像"
-              fill
-              className="rounded-full object-cover border-2 border-gray-100 dark:border-slate-600"
-            />
-          </div>
-          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">
-            ふらふら旅行記
-          </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-300 text-center leading-relaxed">
-            賢く移動して、気ままに旅する。<br />
-            北陸（福井・石川）から東京への移動手段や、失敗しない旅行の手順をロジカルに解説します。
-          </p>
+    <div className="flex flex-col gap-8">
+      <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-card">
+        <div className="flex flex-col items-center text-center">
+          <div className="relative w-20 h-20 mb-4"><Image src="/favicon.ico" alt="ロゴ" fill className="rounded-full object-cover border-2 border-gray-50" /></div>
+          <h2 className="text-lg font-bold text-gray-800 mb-2">ふらふら旅行記</h2>
+          <p className="text-xs text-gray-600 leading-relaxed">北陸（福井・石川）から東京への移動手段をロジカルに解説。賢く快適な旅の手順をお届けします。</p>
         </div>
       </div>
-
-      {/* ▼ 追加: 検索窓 */}
       <SearchField />
-
-      {/* カテゴリ一覧 */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 border-b pb-2 border-gray-200 dark:border-slate-700">
-          カテゴリ
+      <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-card">
+        <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span className="w-1.5 h-4 bg-brand-600 rounded-full"></span>カテゴリー
         </h3>
-        <ul className="space-y-3">
+        <nav><ul className="space-y-1">
           {categories.map((category) => (
             <li key={category.id}>
-              <Link
-                href={`/blog/${category.id}`}
-                className="flex items-center justify-between text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-              >
-                <span>{category.name}</span>
-                <span className="text-xs bg-gray-100 dark:bg-slate-700 px-2 py-1 rounded-full text-gray-500 dark:text-gray-400">
-                  ▶
-                </span>
+              <Link href={`/blog/${category.id}`} className="flex items-center justify-between text-sm text-gray-600 hover:text-brand-600 hover:bg-brand-50 px-3 py-2.5 rounded-xl transition-all group">
+                <span>{category.name}</span><span className="text-gray-300 group-hover:translate-x-1 transition-transform">→</span>
               </Link>
             </li>
           ))}
-        </ul>
+        </ul></nav>
       </div>
-    </aside>
+    </div>
   );
 };

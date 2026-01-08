@@ -16,13 +16,11 @@ const notojp = Noto_Sans_JP({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://furahura-travel.com'),
-  
   alternates: {
     types: {
       'application/rss+xml': '/feed.xml',
     },
   },
-
   title: {
     template: '%s | ふらふら旅行記',
     default: 'ふらふら旅行記',
@@ -44,13 +42,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja">
-      {/* ▼ dark:系のクラスをすべて削除し、常に明るい色で固定 */}
+    /* ▼ ポイント1: className="light" を明示し、styleでcolor-schemeを強制 
+       これでブラウザの自動ダークモード適用を強力に抑制します
+    */
+    <html lang="ja" className="light" style={{ colorScheme: 'light' }}>
       <body className={`${inter.variable} ${notojp.variable} font-sans bg-gray-50 text-gray-900 flex flex-col min-h-screen`}>
+        {/* ▼ ヘッダー（すりガラス効果反映済み） */}
         <Header />
+        
         <div className="flex-grow">
           {children}
         </div>
+
+        {/* ▼ フッター（ダークモード記述削除済み） */}
         <Footer />
         
         {process.env.NEXT_PUBLIC_GA_ID && (
