@@ -10,8 +10,21 @@ type Props = {
   params: Promise<{ categoryId: string }>;
 };
 
+// メタデータ生成ロジック
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { categoryId } = await params;
+
+  // ▼▼▼ "all" の場合の特例処理 ▼▼▼
+  if (categoryId === "all") {
+    return {
+      title: "全記事一覧",
+      description: "ふらふら旅行記のすべての記事アーカイブ。",
+      openGraph: {
+        title: "全記事一覧 | ふらふら旅行記",
+      },
+    };
+  }
+
   const categories = await getCategories({ filters: `id[equals]${categoryId}` });
   const category = categories.contents[0];
 
@@ -26,35 +39,55 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+// 静的パス生成
 export async function generateStaticParams() {
   const categories = await getAllCategories();
-  return categories.map((cat) => ({
+  // 既存のカテゴリIDに加え、"all" も静的生成対象に含める
+  const params = categories.map((cat) => ({
     categoryId: cat.id,
   }));
+  return [...params, { categoryId: "all" }];
 }
 
 export default async function CategoryPage({ params }: Props) {
   const { categoryId } = await params;
   
-  const categories = await getCategories({ filters: `id[equals]${categoryId}` });
-  const category = categories.contents[0];
+  // 変数定義
+  let categoryName = "";
+  let posts = [];
 
-  if (!category) notFound();
+  // ▼▼▼ "all" かどうかで処理を分岐 ▼▼▼
+  if (categoryId === "all") {
+    categoryName = "全記事一覧";
+    // フィルタなしで全件取得
+    const { contents } = await getList({
+      limit: 50,
+    });
+    posts = contents;
+  } else {
+    // 通常のカテゴリ取得
+    const categories = await getCategories({ filters: `id[equals]${categoryId}` });
+    const category = categories.contents[0];
 
-  const { contents: posts } = await getList({
-    limit: 50,
-    filters: `category[equals]${categoryId}`,
-  });
+    if (!category) notFound();
+    categoryName = category.name;
+
+    const { contents } = await getList({
+      limit: 50,
+      filters: `category[equals]${categoryId}`,
+    });
+    posts = contents;
+  }
 
   return (
     <main className="max-w-7xl mx-auto p-4 sm:p-6 bg-gray-50 text-gray-900">
-      <Breadcrumb items={[{ name: "TOP", path: "/" }, { name: category.name }]} />
+      <Breadcrumb items={[{ name: "ホーム", path: "/" }, { name: categoryName }]} />
 
       <div className="flex flex-col lg:flex-row gap-10 mt-6">
         <div className="flex-1 min-w-0">
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-8">
             <h1 className="text-3xl font-bold text-gray-900">
-              {category.name}
+              {categoryName}
             </h1>
             <p className="text-sm text-gray-500 mt-2">
               {posts.length}件の記事が見つかりました
@@ -79,7 +112,7 @@ export default async function CategoryPage({ params }: Props) {
                     />
                   </div>
                   <div className="p-5 flex flex-col justify-center flex-grow">
-                    <h2 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-brand-600 transition-colors">
+                    <h2 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
                       {post.title}
                     </h2>
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">

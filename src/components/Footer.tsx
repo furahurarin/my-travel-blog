@@ -16,23 +16,23 @@ export const Footer = () => {
             </p>
           </div>
 
-          {/* 2. カテゴリ・記事を探す */}
+          {/* 2. カテゴリー（トップページと整合性をとる） */}
           <div>
             <h3 className="text-sm font-bold text-gray-800 mb-4">カテゴリー</h3>
             <ul className="space-y-3 text-sm text-gray-600">
               <li>
-                <Link href="/blog/all" className="hover:text-blue-600 transition flex items-center gap-2">
-                  <span>全記事一覧</span>
+                <Link href="/blog/all" className="hover:text-blue-600 transition font-bold">
+                  全記事一覧
                 </Link>
               </li>
-              {/* 英語表記を削除し日本語のみに */}
-              <li><Link href="/blog/mobility" className="hover:text-blue-600 transition">移動手段</Link></li>
-              <li><Link href="/blog/hotel" className="hover:text-blue-600 transition">宿泊記</Link></li>
-              <li><Link href="/blog/money" className="hover:text-blue-600 transition">マイル・費用</Link></li>
+              <li><Link href="/blog/mobility" className="hover:text-blue-600 transition">移動の比較・検証</Link></li>
+              <li><Link href="/blog/stay" className="hover:text-blue-600 transition">宿泊・ホテル</Link></li>
+              <li><Link href="/blog/money" className="hover:text-blue-600 transition">マイル・旅費</Link></li>
+              <li><Link href="/blog/column" className="hover:text-blue-600 transition">コラム・考察</Link></li>
             </ul>
           </div>
 
-          {/* 3. サイト情報・法的表記 */}
+          {/* 3. サイト情報 */}
           <div>
             <h3 className="text-sm font-bold text-gray-800 mb-4">サイト情報</h3>
             <ul className="space-y-3 text-sm text-gray-600">

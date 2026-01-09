@@ -4,21 +4,27 @@ import Image from "next/image";
 import { Sidebar } from "@/components/Sidebar";
 import { TopSlider } from "@/components/TopSlider";
 
+// ▼▼▼ 修正: カテゴリ順序を「需要順」に変更し、「コラム」を追加 ▼▼▼
 const CATEGORY_SECTIONS = [
   { 
     id: "mobility", 
-    title: "移動手段を「比較・検証」する", 
+    title: "移動の比較・検証", 
     subtitle: "「安いけどしんどい」を避ける。時間・費用・疲労度を比較したルート検証。" 
   },
   { 
     id: "stay", 
-    title: "滞在の「質」を確保する", 
+    title: "宿泊・ホテル", 
     subtitle: "翌日のパフォーマンスは宿で決まる。失敗しないホテルの選び方。" 
   },
   { 
     id: "money", 
-    title: "旅費とマイルを「最適化」する", 
+    title: "マイル・旅費", 
     subtitle: "価値ある使い道と、損をしない決済・運用の出口戦略。" 
+  },
+  { 
+    id: "column", 
+    title: "コラム・考察", 
+    subtitle: "旅の思考実験と、個人的な検証記録のアーカイブ。" 
   },
 ];
 
@@ -131,8 +137,7 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* サイドバーのプロフィールを非表示に */}
-        <Sidebar showProfile={false} />
+        <Sidebar />
       </div>
     </main>
   );

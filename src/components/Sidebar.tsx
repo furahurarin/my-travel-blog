@@ -11,6 +11,24 @@ export const Sidebar = async ({ showProfile = true }: SidebarProps) => {
   const { contents: newPosts } = await getList({ limit: 5 });
   const categories = await getAllCategories();
 
+  // ▼▼▼ 修正: カテゴリの表示順序を定義して並び替え ▼▼▼
+  const categoryOrder = ["mobility", "stay", "money", "column"];
+  
+  const sortedCategories = [...categories].sort((a, b) => {
+    const indexA = categoryOrder.indexOf(a.id);
+    const indexB = categoryOrder.indexOf(b.id);
+    
+    // 両方とも定義リストにある場合、その順序に従う
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    
+    // 定義リストにあるものを優先して上に表示
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    
+    // どちらもリストにない場合は元の順序を維持
+    return 0;
+  });
+
   return (
     <aside className="w-full lg:w-80 flex flex-col gap-8">
       {/* 1. プロフィールブロック (showProfileがtrueの時だけ表示) */}
@@ -78,11 +96,11 @@ export const Sidebar = async ({ showProfile = true }: SidebarProps) => {
         </div>
       </div>
 
-      {/* 4. カテゴリ (常に表示) */}
+      {/* 4. カテゴリ (定義順に表示) */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
         <h3 className="font-bold text-gray-800 mb-4 border-b pb-2">カテゴリ</h3>
         <ul className="space-y-2">
-          {categories.map((cat) => (
+          {sortedCategories.map((cat) => (
             <li key={cat.id}>
               <Link 
                 href={`/blog/${cat.id}`}
