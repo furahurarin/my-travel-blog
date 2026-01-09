@@ -1,4 +1,5 @@
-import { getDetail, getList, type Blog, type BodyBlock } from "@/libs/microcms";
+// ▼ 修正1: getAllBlogs をインポートに追加
+import { getDetail, getList, getAllBlogs, type Blog, type BodyBlock } from "@/libs/microcms";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import { Sidebar } from "@/components/Sidebar";
@@ -17,6 +18,7 @@ type Props = {
   searchParams: Promise<{ draftKey?: string }>;
 };
 
+// ... (generateMetadata は変更なし) ...
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { id } = await params;
   const { draftKey } = await searchParams;
@@ -33,10 +35,17 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
 }
 
 export async function generateStaticParams() {
-  // ▼ 修正: limitを1000件（または最大予測数）に設定し、古い記事が404になるのを防ぐ
-  const { contents } = await getList({ limit: 1000 });
-  return contents.filter((post) => post.category).map((post) => ({ categoryId: post.category!.id, id: post.id }));
+  // ▼ 修正2: getList({ limit: 1000 }) はエラーになるため、全件取得用関数 getAllBlogs() を使用
+  // getAllBlogs は { contents: [] } ではなく、配列そのもの [] を返します
+  const contents = await getAllBlogs();
+  
+  return contents.filter((post) => post.category).map((post) => ({ 
+    categoryId: post.category!.id, 
+    id: post.id 
+  }));
 }
+
+// ... (以下、カスタムフィールド用コンポーネントや BlogPost 関数などは変更なし) ...
 
 // --- カスタムフィールド用レンダリングコンポーネント ---
 
@@ -136,14 +145,13 @@ export default async function BlogPost({ params, searchParams }: Props) {
     dateModified: post.updatedAt,
     author: {
       '@type': 'Person',
-      name: 'ふらふら旅行記', // サイト運営者名または著者を設定
+      name: 'ふらふら旅行記',
     },
     description: post.description || post.content.replace(/<[^>]+>/g, "").slice(0, 120) + "...",
   };
 
   return (
     <main className="max-w-7xl mx-auto p-4 sm:p-6 bg-gray-50 text-gray-900">
-      {/* ▼ 追加: 構造化データの埋め込み */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -178,7 +186,6 @@ export default async function BlogPost({ params, searchParams }: Props) {
                 fill 
                 className="object-cover"
                 priority
-                // ▼ 追加: 適切な画像サイズを指定して読み込み負荷を軽減
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
               />
             </div>
