@@ -7,7 +7,6 @@ export const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left">
             <h2 className="text-lg font-bold text-gray-800 mb-2">ふらふら旅行記</h2>
-            {/* ▼ タグライン修正 */}
             <p className="text-xs text-gray-500 tracking-wide">
               Logic & Comfort.<br/>
               根拠のある旅は、快適だ。

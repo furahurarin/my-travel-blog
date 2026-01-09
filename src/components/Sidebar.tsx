@@ -1,38 +1,27 @@
-import { getList } from "@/libs/microcms";
+import { getList, getAllCategories } from "@/libs/microcms";
 import Link from "next/link";
 import Image from "next/image";
 import { SearchField } from "./SearchField";
 
 export const Sidebar = async () => {
   const { contents: newPosts } = await getList({ limit: 5 });
-  
-  // ▼▼▼ カテゴリ表記修正 (日本語 + 英語) ▼▼▼
-  const categories = [
-    { id: "hokuriku-tokyo", name: "移動の比較 (Mobility)" },
-    { id: "hotel-tips", name: "宿泊・ホテル (Stay)" },
-    { id: "cards-insurance", name: "マイル・旅費 (Money)" },
-    { id: "misc", name: "コラム・考察 (Column)" },
-  ];
+  const categories = await getAllCategories();
 
   return (
     <aside className="w-full lg:w-80 flex flex-col gap-8">
-      {/* プロフィール */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
         <div className="flex items-center gap-4 mb-4">
           <div className="relative w-16 h-16 overflow-hidden rounded-full border-2 border-gray-100 bg-gray-50 text-gray-600">
-             {/* シンプルなアイコン */}
              <div className="w-full h-full flex items-center justify-center text-2xl">
                ✈️
              </div>
           </div>
           <div>
             <p className="font-bold text-gray-900">ふらふら旅行記</p>
-            {/* ▼ 肩書き修正 */}
             <p className="text-xs text-gray-500">Travel Analyst / 旅の検証</p>
           </div>
         </div>
         
-        {/* ▼ 自己紹介文修正 */}
         <div className="text-sm text-gray-600 leading-relaxed mb-4 text-justify">
           <p className="mb-3">
             「100円の安さ」よりも、「1時間の快適さ」を大切にしたい。
@@ -48,13 +37,11 @@ export const Sidebar = async () => {
         </Link>
       </div>
 
-      {/* 検索ボックス */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
         <h3 className="font-bold text-gray-800 mb-4 border-b pb-2">サイト内検索</h3>
         <SearchField />
       </div>
 
-      {/* 最新記事 */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
         <h3 className="font-bold text-gray-800 mb-4 border-b pb-2">最新の記事</h3>
         <div className="flex flex-col gap-4">
@@ -82,7 +69,6 @@ export const Sidebar = async () => {
         </div>
       </div>
 
-      {/* カテゴリ */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
         <h3 className="font-bold text-gray-800 mb-4 border-b pb-2">カテゴリ</h3>
         <ul className="space-y-2">

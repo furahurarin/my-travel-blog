@@ -4,20 +4,20 @@ import Image from "next/image";
 import { Sidebar } from "@/components/Sidebar";
 import { TopSlider } from "@/components/TopSlider";
 
-// ▼▼▼ 文言修正箇所 ▼▼▼
+// ▼▼▼ 修正: MicroCMSで新しく設定したID (mobility, stay, money) に合わせます ▼▼▼
 const CATEGORY_SECTIONS = [
   { 
-    id: "hokuriku-tokyo", 
+    id: "mobility", // 旧: hokuriku-tokyo
     title: "移動手段を「比較・検証」する", 
     subtitle: "「安いけどしんどい」を避ける。時間・費用・疲労度を比較したルート検証。" 
   },
   { 
-    id: "hotel-tips", 
+    id: "stay", // 旧: hotel-tips
     title: "滞在の「質」を確保する", 
     subtitle: "翌日のパフォーマンスは宿で決まる。失敗しないホテルの選び方。" 
   },
   { 
-    id: "cards-insurance", 
+    id: "money", // 旧: cards-insurance
     title: "旅費とマイルを「最適化」する", 
     subtitle: "価値ある使い道と、損をしない決済・運用の出口戦略。" 
   },
@@ -26,6 +26,7 @@ const CATEGORY_SECTIONS = [
 export default async function Home() {
   const sliderData = await getList({ limit: 5 });
 
+  // 各カテゴリの記事を取得
   const categoryPostsPromises = CATEGORY_SECTIONS.map((cat) =>
     getList({
       limit: 3,
@@ -48,6 +49,7 @@ export default async function Home() {
           
           {CATEGORY_SECTIONS.map((cat, index) => {
             const posts = categoryPostsResults[index].contents;
+            // 記事がない場合はセクションごと非表示（エラー回避）
             if (posts.length === 0) return null;
 
             return (

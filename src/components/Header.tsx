@@ -25,7 +25,6 @@ export const Header = () => {
           ふらふら旅行記
         </Link>
         
-        {/* デスクトップ用メニュー */}
         <nav className="hidden md:flex gap-8">
           <Link href="/about" className="group text-sm font-medium text-gray-600 hover:text-blue-600 transition flex flex-col items-center">
             <span>About</span>
@@ -41,7 +40,6 @@ export const Header = () => {
           </Link>
         </nav>
 
-        {/* ハンバーガーボタン */}
         <button 
           onClick={toggleMenu}
           className="md:hidden z-50 p-2 text-gray-600 hover:bg-gray-100 rounded-md focus:outline-none"
@@ -54,7 +52,6 @@ export const Header = () => {
           </div>
         </button>
 
-        {/* モバイル用メニューオーバーレイ */}
         <div 
           className={`fixed inset-0 bg-white/95 backdrop-blur-lg transition-opacity duration-300 z-40 md:hidden flex flex-col items-center justify-center space-y-8 ${
             isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'

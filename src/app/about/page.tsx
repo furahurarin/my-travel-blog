@@ -1,26 +1,71 @@
+import { Sidebar } from "@/components/Sidebar";
+import { Breadcrumb } from "@/components/Breadcrumb";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About - このブログについて",
+  description: "ふらふら旅行記のコンセプトと運営者プロフィール。",
+};
+
 export default function AboutPage() {
   return (
-    <main className="max-w-3xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">運営者情報・当サイトについて</h1>
-      
-      <div className="prose prose-lg dark:prose-invert">
-        <p>
-          当ブログ「ふらふら旅行記」をご覧いただきありがとうございます。<br />
-          「移動を最適化し、旅を最大化する」をテーマに、北陸新幹線・飛行機の徹底比較やSFC修行、マイル活用術、厳選したクレジットカード情報を発信しています。データと実体験に基づく「失敗しない旅の選び方」をお届けします。
-        </p>
+    <main className="max-w-7xl mx-auto p-4 sm:p-6 bg-gray-50 text-gray-900">
+      <Breadcrumb items={[{ name: "TOP", path: "/" }, { name: "About" }]} />
 
-        <h3>サイトの目的</h3>
-        <p>
-          「体験談」だけでなく、読んだ方が実際に再現できる「手順」として情報を提供することを大切にしています。<br />
-          特に、北陸（福井・石川）から東京への移動や、効率的な空港・ラウンジの活用方法について詳しく解説します。
-        </p>
+      <div className="flex flex-col lg:flex-row gap-10 mt-6">
+        <div className="flex-1 min-w-0 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+          
+          <h1 className="text-3xl font-bold text-gray-900 mb-8 border-b pb-4">
+            About This Log
+          </h1>
 
-        <h3>運営者</h3>
-        <ul>
-          {/* ▼ 修正: 名前を変更（必要であれば「ふらふら旅行記」等の名義を入れてください） */}
-          <li>名前：ふらふら旅行記 運営</li>
-          <li>連絡先：お問い合わせフォームよりお願いいたします。</li>
-        </ul>
+          <div className="prose prose-gray max-w-none space-y-12">
+            
+            <section>
+              <h2 className="text-xl font-bold text-gray-800 mb-4">コンセプト：根拠で選ぶ、快適な旅。</h2>
+              <p className="leading-relaxed text-gray-600">
+                旅行の計画を立てるとき、こんな風に迷ったことはありませんか？
+              </p>
+              <ul className="list-disc pl-5 text-gray-600 my-4 space-y-2">
+                <li>新幹線と飛行機、どっちが正解なんだろう？</li>
+                <li>高いホテルに泊まって、本当に値段分の価値はあるのかな？</li>
+                <li>マイルを貯めたいけど、結局どのカードが得なの？</li>
+              </ul>
+              <p className="leading-relaxed text-gray-600">
+                このブログ「ふらふら旅行記」は、そんな迷いに対して、
+                <strong>時間・費用・疲労度・リスク</strong>といった具体的な「根拠」を基に、最適解を検証するログ（記録）です。
+              </p>
+              <p className="leading-relaxed text-gray-600 mt-4">
+                「100円の安さ」よりも「1時間の快適さ」を大切にしたい。<br />
+                そんな大人のための、実用的な旅のノウハウを共有します。
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-gray-800 mb-4">運営者について</h2>
+              <div className="flex flex-col sm:flex-row gap-6 items-start">
+                <div className="w-24 h-24 shrink-0 bg-gray-100 rounded-full flex items-center justify-center text-3xl">
+                  ✈️
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">ふらふら旅行記</h3>
+                  <p className="text-sm text-brand-600 font-bold mb-3">Travel Analyst / 旅の検証・記録</p>
+                  <p className="text-gray-600 leading-relaxed mb-4">
+                    北陸を拠点に活動する、こだわり強めの旅好き。<br />
+                    「なんとなく」で選んで後悔するのが嫌いで、移動手段やホテルのスペックを徹底的に調べ上げるのが趣味です。<br />
+                    ANA Super Flyers Card (SFC) ホルダー。
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    ※当ブログの記事は個人の検証結果に基づくものであり、最新の運行状況やサービス内容は各公式サイトをご確認ください。
+                  </p>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+
+        <Sidebar />
       </div>
     </main>
   );

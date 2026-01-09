@@ -10,7 +10,6 @@ type Props = {
   params: Promise<{ categoryId: string }>;
 };
 
-// ▼ 追加: メタデータ生成（SEO対策）
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { categoryId } = await params;
   const categories = await getCategories({ filters: `id[equals]${categoryId}` });
@@ -20,15 +19,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${category.name}の記事一覧`,
-    description: `${category.name}に関する旅行記事の一覧です。`,
+    description: `${category.name}に関する検証と考察のアーカイブです。`,
     openGraph: {
-      title: `${category.name}の記事一覧 | ふらふら旅行記`,
+      title: `${category.name} | ふらふら旅行記`,
     },
   };
 }
 
 export async function generateStaticParams() {
-  // ▼ 修正: 全カテゴリを取得してパスを生成 (getAllCategoriesを使用)
   const categories = await getAllCategories();
   return categories.map((cat) => ({
     categoryId: cat.id,
@@ -38,14 +36,11 @@ export async function generateStaticParams() {
 export default async function CategoryPage({ params }: Props) {
   const { categoryId } = await params;
   
-  // カテゴリ名の取得
   const categories = await getCategories({ filters: `id[equals]${categoryId}` });
   const category = categories.contents[0];
 
   if (!category) notFound();
 
-  // 記事一覧の取得
-  // ▼ 修正: limitを増やして、10件以上表示できるようにする (本格的な運用ではページネーション推奨だが、まずは50件表示でカバー)
   const { contents: posts } = await getList({
     limit: 50,
     filters: `category[equals]${categoryId}`,
@@ -57,8 +52,8 @@ export default async function CategoryPage({ params }: Props) {
 
       <div className="flex flex-col lg:flex-row gap-10 mt-6">
         <div className="flex-1 min-w-0">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">
               {category.name}
             </h1>
             <p className="text-sm text-gray-500 mt-2">
@@ -79,7 +74,6 @@ export default async function CategoryPage({ params }: Props) {
                       src={post.eyecatch?.url ?? "/no-image.png"}
                       alt={post.title}
                       fill
-                      // ▼ 追加: 画像最適化
                       sizes="(max-width: 640px) 100vw, 300px"
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
