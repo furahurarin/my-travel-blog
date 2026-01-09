@@ -1,31 +1,19 @@
 import type { Metadata } from "next";
-import { Inter, Noto_Sans_JP } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+// ▼ HeaderとFooterをインポート（ここが抜けていました）
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { GoogleAnalytics } from '@next/third-parties/google';
 
-const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
-
-const notojp = Noto_Sans_JP({
-  weight: ["400", "500", "700"],
-  subsets: ["latin"],
-  variable: '--font-noto-sans-jp',
-  display: "swap",
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://furahura-travel.com'),
-  alternates: {
-    types: {
-      'application/rss+xml': '/feed.xml',
-    },
-  },
   title: {
     template: '%s | ふらふら旅行記',
-    default: 'ふらふら旅行記',
+    default: 'ふらふら旅行記｜移動と滞在の「最適解」を検証する旅ログ',
   },
-  description: "賢い移動と快適な旅を追求する旅行ブログ",
+  description: "「安さ」と「快適さ」のバランスにお悩みの方へ。時間・費用・疲労度・遅延リスクなどの「根拠」を基に、移動手段（新幹線・飛行機）やホテル選びを検証する記録。なんとなくで選んで後悔したくない、大人のための実用ノウハウ。",
   openGraph: {
     siteName: 'ふらふら旅行記',
     locale: 'ja_JP',
@@ -42,24 +30,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    /* ▼ ポイント1: className="light" を明示し、styleでcolor-schemeを強制 
-       これでブラウザの自動ダークモード適用を強力に抑制します
-    */
-    <html lang="ja" className="light" style={{ colorScheme: 'light' }}>
-      <body className={`${inter.variable} ${notojp.variable} font-sans bg-gray-50 text-gray-900 flex flex-col min-h-screen`}>
-        {/* ▼ ヘッダー（すりガラス効果反映済み） */}
+    <html lang="ja">
+      <body className={inter.className}>
+        {/* ▼ ヘッダーを追加 */}
         <Header />
         
-        <div className="flex-grow">
-          {children}
-        </div>
-
-        {/* ▼ フッター（ダークモード記述削除済み） */}
-        <Footer />
+        {children}
         
-        {process.env.NEXT_PUBLIC_GA_ID && (
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-        )}
+        {/* ▼ フッターを追加 */}
+        <Footer />
       </body>
     </html>
   );

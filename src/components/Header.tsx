@@ -26,15 +26,18 @@ export const Header = () => {
         </Link>
         
         {/* デスクトップ用メニュー */}
-        <nav className="hidden md:flex gap-6">
-          <Link href="/about" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition">
-            About
+        <nav className="hidden md:flex gap-8">
+          <Link href="/about" className="group text-sm font-medium text-gray-600 hover:text-blue-600 transition flex flex-col items-center">
+            <span>About</span>
+            <span className="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity absolute top-10">このブログについて</span>
           </Link>
-          <Link href="/blog/all" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition">
-            Blog
+          <Link href="/blog/all" className="group text-sm font-medium text-gray-600 hover:text-blue-600 transition flex flex-col items-center">
+            <span>Articles</span>
+            <span className="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity absolute top-10">記事一覧</span>
           </Link>
-          <Link href="/contact" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition">
-            Contact
+          <Link href="/contact" className="group text-sm font-medium text-gray-600 hover:text-blue-600 transition flex flex-col items-center">
+            <span>Contact</span>
+            <span className="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity absolute top-10">お問い合わせ</span>
           </Link>
         </nav>
 
@@ -57,17 +60,17 @@ export const Header = () => {
             isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
           }`}
         >
-          <Link href="/" onClick={closeMenu} className="text-lg font-bold text-gray-800 hover:text-blue-600">
-            Home
+          <Link href="/about" onClick={closeMenu} className="flex flex-col items-center group">
+            <span className="text-2xl font-bold text-gray-800 group-hover:text-blue-600">About</span>
+            <span className="text-xs text-gray-500 mt-1">このブログについて</span>
           </Link>
-          <Link href="/about" onClick={closeMenu} className="text-lg font-bold text-gray-800 hover:text-blue-600">
-            About
+          <Link href="/blog/all" onClick={closeMenu} className="flex flex-col items-center group">
+            <span className="text-2xl font-bold text-gray-800 group-hover:text-blue-600">Articles</span>
+            <span className="text-xs text-gray-500 mt-1">記事一覧</span>
           </Link>
-          <Link href="/blog/all" onClick={closeMenu} className="text-lg font-bold text-gray-800 hover:text-blue-600">
-            Blog
-          </Link>
-          <Link href="/contact" onClick={closeMenu} className="text-lg font-bold text-gray-800 hover:text-blue-600">
-            Contact
+          <Link href="/contact" onClick={closeMenu} className="flex flex-col items-center group">
+            <span className="text-2xl font-bold text-gray-800 group-hover:text-blue-600">Contact</span>
+            <span className="text-xs text-gray-500 mt-1">お問い合わせ</span>
           </Link>
         </div>
       </div>

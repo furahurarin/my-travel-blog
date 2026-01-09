@@ -4,15 +4,14 @@ import Image from "next/image";
 import { SearchField } from "./SearchField";
 
 export const Sidebar = async () => {
-  // 最新記事の取得
   const { contents: newPosts } = await getList({ limit: 5 });
   
-  // カテゴリの取得 (手動定義またはAPI取得)
+  // ▼▼▼ カテゴリ表記修正 (日本語 + 英語) ▼▼▼
   const categories = [
-    { id: "hokuriku-tokyo", name: "北陸⇔東京" },
-    { id: "hotel-tips", name: "ホテル・宿" },
-    { id: "cards-insurance", name: "クレカ・保険" },
-    { id: "misc", name: "その他" },
+    { id: "hokuriku-tokyo", name: "移動の比較 (Mobility)" },
+    { id: "hotel-tips", name: "宿泊・ホテル (Stay)" },
+    { id: "cards-insurance", name: "マイル・旅費 (Money)" },
+    { id: "misc", name: "コラム・考察 (Column)" },
   ];
 
   return (
@@ -20,20 +19,32 @@ export const Sidebar = async () => {
       {/* プロフィール */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
         <div className="flex items-center gap-4 mb-4">
-          <div className="relative w-16 h-16 overflow-hidden rounded-full border-2 border-gray-100">
-             {/* プロフィール画像があれば変更 */}
-             <div className="w-full h-full bg-gray-200 flex items-center justify-center text-2xl">✈️</div>
+          <div className="relative w-16 h-16 overflow-hidden rounded-full border-2 border-gray-100 bg-gray-50 text-gray-600">
+             {/* シンプルなアイコン */}
+             <div className="w-full h-full flex items-center justify-center text-2xl">
+               ✈️
+             </div>
           </div>
           <div>
             <p className="font-bold text-gray-900">ふらふら旅行記</p>
-            <p className="text-xs text-gray-500">運営者</p>
+            {/* ▼ 肩書き修正 */}
+            <p className="text-xs text-gray-500">Travel Analyst / 旅の検証</p>
           </div>
         </div>
-        <p className="text-sm text-gray-600 leading-relaxed mb-4">
-          賢く旅するノウハウを発信中。移動手段の比較やお得なホテル予約術が得意です。
-        </p>
-        <Link href="/about" className="text-xs font-bold text-blue-600 hover:underline">
-          プロフィール詳細 →
+        
+        {/* ▼ 自己紹介文修正 */}
+        <div className="text-sm text-gray-600 leading-relaxed mb-4 text-justify">
+          <p className="mb-3">
+            「100円の安さ」よりも、「1時間の快適さ」を大切にしたい。
+          </p>
+          <p>
+            北陸拠点。移動と宿を中心に、旅の満足度を上げる方法を数字と条件で検証しています。
+            感想だけでなく、時間・費用・疲労などの判断材料を残すのが方針です。
+          </p>
+        </div>
+
+        <Link href="/about" className="text-xs font-bold text-brand-600 hover:underline">
+          詳しいプロフィール →
         </Link>
       </div>
 
@@ -54,7 +65,6 @@ export const Sidebar = async () => {
                   src={post.eyecatch?.url ?? "/no-image.png"}
                   alt={post.title}
                   fill
-                  // ▼ 修正: サイドバー画像は小さいので80px幅のみで十分
                   sizes="80px"
                   className="object-cover group-hover:scale-110 transition-transform duration-300"
                 />

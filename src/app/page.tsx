@@ -4,10 +4,23 @@ import Image from "next/image";
 import { Sidebar } from "@/components/Sidebar";
 import { TopSlider } from "@/components/TopSlider";
 
+// ▼▼▼ 文言修正箇所 ▼▼▼
 const CATEGORY_SECTIONS = [
-  { id: "hokuriku-tokyo", title: "北陸⇔東京の移動手段", subtitle: "新幹線・飛行機・バスを徹底比較" },
-  { id: "hotel-tips", title: "賢いホテル選び", subtitle: "失敗しない宿選びと予約のコツ" },
-  { id: "cards-insurance", title: "クレカ・旅行保険", subtitle: "旅をお得に、安心にする一枚" },
+  { 
+    id: "hokuriku-tokyo", 
+    title: "移動手段を「比較・検証」する", 
+    subtitle: "「安いけどしんどい」を避ける。時間・費用・疲労度を比較したルート検証。" 
+  },
+  { 
+    id: "hotel-tips", 
+    title: "滞在の「質」を確保する", 
+    subtitle: "翌日のパフォーマンスは宿で決まる。失敗しないホテルの選び方。" 
+  },
+  { 
+    id: "cards-insurance", 
+    title: "旅費とマイルを「最適化」する", 
+    subtitle: "価値ある使い道と、損をしない決済・運用の出口戦略。" 
+  },
 ];
 
 export default async function Home() {
@@ -25,7 +38,7 @@ export default async function Home() {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       
-      <h1 className="sr-only">ふらふら旅行記 - 北陸から東京への賢い移動と旅のノウハウ</h1>
+      <h1 className="sr-only">ふらふら旅行記 - 移動と滞在の最適解を検証する旅ログ</h1>
 
       <TopSlider contents={sliderData.contents} />
 
@@ -68,7 +81,6 @@ export default async function Home() {
                           src={post.eyecatch?.url ?? "/no-image.png"}
                           alt={post.title}
                           fill
-                          // ▼ 追加: モバイルは全幅、PCは固定幅(約200px)であることをブラウザに伝える
                           sizes="(max-width: 640px) 100vw, 200px"
                           className="object-cover transition-transform duration-500 group-hover:scale-110"
                         />

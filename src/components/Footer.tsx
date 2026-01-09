@@ -2,32 +2,25 @@ import Link from "next/link";
 
 export const Footer = () => {
   return (
-    <footer className="bg-white border-t border-gray-200 mt-16 text-gray-900">
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-          <div className="col-span-1">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">ふらふら旅行記</h3>
-            <p className="text-sm text-gray-500 leading-relaxed">「移動を最適化し、旅を最大化する」をテーマに、北陸新幹線・飛行機の徹底比較やSFC修行、マイル活用術、厳選したクレジットカード情報を発信しています。データと実体験に基づく「失敗しない旅の選び方」をお届けします。</p>
+    <footer className="bg-white border-t border-gray-100 mt-auto">
+      <div className="max-w-4xl mx-auto px-6 py-10">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-center md:text-left">
+            <h2 className="text-lg font-bold text-gray-800 mb-2">ふらふら旅行記</h2>
+            {/* ▼ タグライン修正 */}
+            <p className="text-xs text-gray-500 tracking-wide">
+              Logic & Comfort.<br/>
+              根拠のある旅は、快適だ。
+            </p>
           </div>
-          <div className="col-span-1">
-            <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Contents</h4>
-            <ul className="space-y-3">
-              <li><Link href="/" className="text-sm text-gray-500 hover:text-brand-600 transition">トップページ</Link></li>
-              <li><Link href="/about" className="text-sm text-gray-500 hover:text-brand-600 transition">運営者情報</Link></li>
-              <li><Link href="/contact" className="text-sm text-gray-500 hover:text-brand-600 transition">お問い合わせ</Link></li>
-            </ul>
-          </div>
-          <div className="col-span-1">
-            <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Legal</h4>
-            <ul className="space-y-3">
-              <li><Link href="/privacy" className="text-sm text-gray-500 hover:text-brand-600 transition">プライバシーポリシー</Link></li>
-              <li><Link href="/disclosure" className="text-sm text-gray-500 hover:text-brand-600 transition">免責事項・運営方針</Link></li>
-            </ul>
+          <div className="flex gap-6 text-sm font-medium text-gray-600">
+            <Link href="/about" className="hover:text-brand-600 transition">About</Link>
+            <Link href="/blog/all" className="hover:text-brand-600 transition">Articles</Link>
+            <Link href="/contact" className="hover:text-brand-600 transition">Contact</Link>
           </div>
         </div>
-        <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-400">
-          <p className="text-xs">&copy; {new Date().getFullYear()} Furahura Travel Blog. All rights reserved.</p>
-          <p className="text-xs italic font-serif opacity-70">Travel smarter, wander freely.</p>
+        <div className="mt-8 pt-8 border-t border-gray-100 text-center text-xs text-gray-400">
+          &copy; {new Date().getFullYear()} Furafura Travel Log. All rights reserved.
         </div>
       </div>
     </footer>
