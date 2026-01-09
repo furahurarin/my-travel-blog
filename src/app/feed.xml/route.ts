@@ -1,3 +1,5 @@
+// src/app/feed.xml/route.ts
+
 import { getList } from '@/libs/microcms';
 
 export async function GET() {
@@ -18,10 +20,10 @@ export async function GET() {
     ${posts.map((post) => `
     <item>
       <title><![CDATA[${post.title}]]></title>
-      <link>${siteUrl}/blog/${post.category?.id}/${post.id}</link>
-      <guid isPermaLink="true">${siteUrl}/blog/${post.category?.id}/${post.id}</guid>
-      <pubDate>${new Date(post.publishedAt).toUTCString()}</pubDate>
-      <description><![CDATA[${post.content.replace(/<[^>]+>/g, "").slice(0, 120)}...]]></description>
+      <link>${siteUrl}/blog/${post.category?.id || 'misc'}/${post.id}</link>
+      <guid isPermaLink="true">${siteUrl}/blog/${post.category?.id || 'misc'}/${post.id}</guid>
+      <pubDate>${new Date(post.publishedAt || post.createdAt).toUTCString()}</pubDate>
+      <description><![CDATA[${(post.content || "").replace(/<[^>]+>/g, "").slice(0, 120)}...]]></description>
     </item>`).join('')}
   </channel>
 </rss>`;

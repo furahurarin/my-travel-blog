@@ -1,3 +1,5 @@
+// src/app/blog/[categoryId]/page.tsx
+
 import { getList } from "@/libs/microcms";
 import Link from "next/link";
 import Image from "next/image";
@@ -85,11 +87,12 @@ export default async function CategoryPage({ params, searchParams }: Props) {
                     {post.title}
                   </h2>
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2 flex-grow">
+                    {/* HTMLタグを除去して本文抜粋を表示 */}
                     {post.content.replace(/<[^>]+>/g, "").slice(0, 50)}...
                   </p>
-                  {/* ▼▼▼ 修正: "ja-JP" を指定 ▼▼▼ */}
+                  {/* ▼▼▼ 修正: publishedAt が undefined の場合は createdAt を使用 ▼▼▼ */}
                   <time className="text-sm text-gray-500 dark:text-gray-400 mt-auto">
-                    {new Date(post.publishedAt).toLocaleDateString("ja-JP")}
+                    {new Date(post.publishedAt || post.createdAt).toLocaleDateString("ja-JP")}
                   </time>
                 </div>
               </Link>

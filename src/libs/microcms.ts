@@ -1,3 +1,5 @@
+// src/libs/microcms.ts
+
 import { createClient, MicroCMSQueries, MicroCMSImage, MicroCMSDate } from "microcms-js-sdk";
 
 // クライアント初期化
@@ -15,6 +17,7 @@ export const client = createClient({
 });
 
 // ▼ 繰り返しフィールド（body）の各ブロックの型
+// ※ここはカスタムフィールドIDと一致させる必要があります
 export type BodyBlock =
   | {
       fieldId: "richText";
@@ -23,6 +26,17 @@ export type BodyBlock =
   | {
       fieldId: "html";
       html: string;
+    }
+  | {
+      fieldId: "linkButton";
+      url: string;
+      label: string;
+      color: string[];
+    }
+  | {
+      fieldId: "pointBox";
+      content: string;
+      type: string[];
     };
 
 // ▼ カテゴリ型
@@ -36,6 +50,8 @@ export type Blog = {
   id: string;
   title: string;
   eyecatch?: MicroCMSImage;
+  
+  // ★重要: MicroCMSのスキーマ設定が「category」なのでここは単数形
   category?: Category;
 
   // 本文（新・旧）
@@ -54,7 +70,7 @@ export type Blog = {
 
 } & MicroCMSDate;
 
-// ▼ レスポンス型
+// ▼ レスポンス型（必要に応じて使用）
 export type ArticleListResponse = {
   totalCount: number;
   offset: number;
@@ -75,7 +91,7 @@ export const getDetail = async (
   queries?: MicroCMSQueries
 ) => {
   const detailData = await client.getListDetail<Blog>({
-    endpoint: "blogs", // ★ここを 'blogs'（複数形）に修正しました
+    endpoint: "blogs", // ★ここを "blogs" に設定
     contentId,
     queries,
   });
@@ -85,7 +101,7 @@ export const getDetail = async (
 // ▼ 一覧取得
 export const getList = async (queries?: MicroCMSQueries) => {
   const listData = await client.getList<Blog>({
-    endpoint: "blogs", // ★ここを 'blogs'（複数形）に修正しました
+    endpoint: "blogs", // ★ここを "blogs" に設定
     queries,
   });
   return listData;
@@ -94,7 +110,7 @@ export const getList = async (queries?: MicroCMSQueries) => {
 // ▼ カテゴリ一覧取得
 export const getCategories = async (queries?: MicroCMSQueries) => {
   const listData = await client.getList<Category>({
-    endpoint: "categories", // ★ここを 'categories'（複数形）に修正しました
+    endpoint: "categories", // ★ここを "categories" に設定
     queries,
   });
   return listData;

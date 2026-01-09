@@ -1,3 +1,5 @@
+// src/components/RelatedPosts.tsx
+
 import Link from "next/link";
 import { Blog } from "@/libs/microcms";
 
@@ -26,8 +28,8 @@ export const RelatedPosts = ({ posts }: Props) => {
                 {post.title}
               </h4>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {/* ▼▼▼ 修正: "ja-JP" を指定 ▼▼▼ */}
-                {new Date(post.publishedAt).toLocaleDateString("ja-JP")}
+                {/* ▼▼▼ 修正: publishedAt が undefined の場合は createdAt を使用 ▼▼▼ */}
+                {new Date(post.publishedAt || post.createdAt).toLocaleDateString("ja-JP")}
               </p>
             </div>
           </Link>

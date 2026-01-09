@@ -25,12 +25,12 @@ export const Sidebar = async () => {
              </div>
           </div>
           <div>
-            <p className="font-bold text-gray-800">ふらふらりん</p>
-            <p className="text-xs text-gray-500">医学生トラベラー</p>
+            <p className="font-bold text-gray-800">ふらふら旅行記</p>
+            <p className="text-xs text-gray-500">旅の合理化ブロガー</p>
           </div>
         </div>
         <p className="text-sm text-gray-600 leading-relaxed">
-          福井在住の医学生。SFC修行やマイル旅、資産運用について発信中。
+          福井県を拠点に活動するトラベラー。「移動を最適化し、旅を最大化する」をテーマに、北陸新幹線・飛行機の徹底比較やSFC修行、マイル活用術、厳選したクレジットカード情報を発信しています。データと実体験に基づく「失敗しない旅の選び方」をお届けします。
         </p>
       </div>
 

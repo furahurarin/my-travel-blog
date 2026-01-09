@@ -7,7 +7,7 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           <div className="col-span-1">
             <h3 className="text-lg font-bold text-gray-900 mb-4">ふらふら旅行記</h3>
-            <p className="text-sm text-gray-500 leading-relaxed">北陸から東京への賢い移動と、失敗しない旅のノウハウを発信するブログメディア。</p>
+            <p className="text-sm text-gray-500 leading-relaxed">「移動を最適化し、旅を最大化する」をテーマに、北陸新幹線・飛行機の徹底比較やSFC修行、マイル活用術、厳選したクレジットカード情報を発信しています。データと実体験に基づく「失敗しない旅の選び方」をお届けします。</p>
           </div>
           <div className="col-span-1">
             <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Contents</h4>

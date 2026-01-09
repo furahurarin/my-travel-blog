@@ -6,9 +6,9 @@ import { TopSlider } from "@/components/TopSlider";
 
 // ▼▼▼ あなたのMicroCMSのカテゴリIDを設定してください ▼▼▼
 const CATEGORY_SECTIONS = [
-  { id: "hokuriku-tokyo", title: "🚄 北陸⇔東京の移動手段", subtitle: "新幹線・飛行機・バスを徹底比較" },
-  { id: "hotel-tips", title: "🏨 賢いホテル選び", subtitle: "失敗しない宿選びと予約のコツ" },
-  { id: "cards-insurance", title: "💳 クレカ・旅行保険", subtitle: "旅をお得に、安心にする一枚" },
+  { id: "hokuriku-tokyo", title: "北陸⇔東京の移動手段", subtitle: "新幹線・飛行機・バスを徹底比較" },
+  { id: "hotel-tips", title: "賢いホテル選び", subtitle: "失敗しない宿選びと予約のコツ" },
+  { id: "cards-insurance", title: "クレカ・旅行保険", subtitle: "旅をお得に、安心にする一枚" },
 ];
 
 export default async function Home() {

@@ -1,3 +1,5 @@
+// src/app/search/page.tsx
+
 import { getList } from "@/libs/microcms";
 import Link from "next/link";
 import Image from "next/image";
@@ -66,9 +68,9 @@ export default async function SearchPage({ searchParams }: Props) {
                     <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
                       {post.title}
                     </h2>
-                    {/* ▼▼▼ 修正: "ja-JP" を指定 ▼▼▼ */}
+                    {/* ▼▼▼ 修正: publishedAt が undefined の場合は createdAt を使用 ▼▼▼ */}
                     <time className="text-sm text-gray-500 dark:text-gray-400 mt-auto">
-                      {new Date(post.publishedAt).toLocaleDateString("ja-JP")}
+                      {new Date(post.publishedAt || post.createdAt).toLocaleDateString("ja-JP")}
                     </time>
                   </div>
                 </Link>
