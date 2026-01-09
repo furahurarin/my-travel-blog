@@ -52,7 +52,7 @@ export default function AboutPage() {
               <div className="flex flex-col sm:flex-row gap-6 items-start p-6 rounded-xl border border-gray-100 bg-gray-50/50">
                 <div className="relative w-24 h-24 shrink-0 bg-white rounded-full overflow-hidden shadow-sm border border-gray-100">
   <Image
-    src="/profile.jpg"
+    src="/profile.png"
     alt="プロフィール画像"
     fill
     className="object-cover"

@@ -13,6 +13,9 @@ import * as cheerio from "cheerio";
 import { draftMode } from 'next/headers';
 import parse from "html-react-parser";
 
+// 60秒ごとにキャッシュを更新（ISR）
+export const revalidate = 60;
+
 type Props = {
   params: Promise<{ categoryId: string; id: string }>;
   searchParams: Promise<{ draftKey?: string }>;

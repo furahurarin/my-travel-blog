@@ -4,6 +4,9 @@ import Image from "next/image";
 import { Sidebar } from "@/components/Sidebar";
 import { TopSlider } from "@/components/TopSlider";
 
+// 60秒ごとにキャッシュを更新（ISR）
+export const revalidate = 60;
+
 // ▼▼▼ 修正: カテゴリ順序を「需要順」に変更し、「コラム」を追加 ▼▼▼
 const CATEGORY_SECTIONS = [
   { 

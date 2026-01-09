@@ -37,7 +37,7 @@ export const Sidebar = async ({ showProfile = true }: SidebarProps) => {
           <div className="flex items-center gap-4 mb-4">
             <div className="relative w-16 h-16 overflow-hidden rounded-full border-2 border-gray-100 bg-gray-50">
   <Image
-    src="/profile.jpg"
+    src="/profile.png"
     alt="プロフィール画像"
     fill
     className="object-cover"

@@ -25,21 +25,21 @@ export const Header = () => {
   return (
     <header className="border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-50 transition-all">
       <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-        {/* ロゴエリア */}
+        {/* ロゴエリア (z-indexを60に上げてオーバーレイより手前に表示) */}
         <Link 
-  href="/" 
-  className="hover:opacity-80 transition relative z-50"
-  onClick={closeMenu}
->
-  <Image
-    src="/logo.png"
-    alt="ふらふら旅行記"
-    width={180}    
-    height={40}    
-    className="w-auto h-8 md:h-10"
-    priority
-  />
-</Link>
+          href="/" 
+          className="hover:opacity-80 transition relative z-[60]"
+          onClick={closeMenu}
+        >
+          <Image
+            src="/logo.png"
+            alt="ふらふら旅行記"
+            width={180}    
+            height={40}    
+            className="w-auto h-8 md:h-10"
+            priority
+          />
+        </Link>
         
         {/* PC用ナビゲーション */}
         <nav className="hidden md:flex gap-6 items-center">
@@ -54,10 +54,10 @@ export const Header = () => {
           ))}
         </nav>
 
-        {/* ハンバーガーメニューボタン */}
+        {/* ハンバーガーメニューボタン (z-indexを60に上げてオーバーレイより手前に表示) */}
         <button 
           onClick={toggleMenu}
-          className="md:hidden z-50 p-2 text-gray-600 hover:bg-gray-100 rounded-md focus:outline-none"
+          className="md:hidden z-[60] p-2 text-gray-600 hover:bg-gray-100 rounded-md focus:outline-none"
           aria-label="メニューを開く"
           aria-expanded={isOpen}
         >
@@ -68,9 +68,9 @@ export const Header = () => {
           </div>
         </button>
 
-        {/* スマホ用メニューオーバーレイ */}
+        {/* スマホ用メニューオーバーレイ (z-indexを55にしてヘッダーバー(z-50)より上に表示) */}
         <div 
-          className={`fixed inset-0 bg-white/98 backdrop-blur-lg transition-all duration-300 z-40 md:hidden flex flex-col items-center justify-center space-y-8 ${
+          className={`fixed inset-0 bg-white/98 backdrop-blur-lg transition-all duration-300 z-[55] md:hidden flex flex-col items-center justify-center space-y-8 ${
             isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
           }`}
         >
