@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import Image from "next/image";
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,12 +27,19 @@ export const Header = () => {
       <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* ロゴエリア */}
         <Link 
-          href="/" 
-          className="text-lg md:text-xl font-bold text-gray-900 hover:opacity-80 transition relative z-50 tracking-tight"
-          onClick={closeMenu}
-        >
-          ふらふら旅行記
-        </Link>
+  href="/" 
+  className="hover:opacity-80 transition relative z-50"
+  onClick={closeMenu}
+>
+  <Image
+    src="/logo.png"
+    alt="ふらふら旅行記"
+    width={180}    
+    height={40}    
+    className="w-auto h-8 md:h-10"
+    priority
+  />
+</Link>
         
         {/* PC用ナビゲーション */}
         <nav className="hidden md:flex gap-6 items-center">

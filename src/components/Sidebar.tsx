@@ -35,11 +35,15 @@ export const Sidebar = async ({ showProfile = true }: SidebarProps) => {
       {showProfile && (
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <div className="flex items-center gap-4 mb-4">
-            <div className="relative w-16 h-16 overflow-hidden rounded-full border-2 border-gray-100 bg-gray-50 text-gray-600">
-              <div className="w-full h-full flex items-center justify-center text-2xl">
-                ✈️
-              </div>
-            </div>
+            <div className="relative w-16 h-16 overflow-hidden rounded-full border-2 border-gray-100 bg-gray-50">
+  <Image
+    src="/profile.jpg"
+    alt="プロフィール画像"
+    fill
+    className="object-cover"
+    sizes="64px"
+  />
+</div>
             <div>
               <p className="font-bold text-gray-900">ふらふら旅行記</p>
               <p className="text-xs text-gray-500">Travel Analyst / 旅の検証</p>

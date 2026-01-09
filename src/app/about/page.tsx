@@ -1,6 +1,7 @@
 import { Sidebar } from "@/components/Sidebar";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import type { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "運営者情報 - このブログについて",
@@ -49,9 +50,15 @@ export default function AboutPage() {
                 運営者について
               </h2>
               <div className="flex flex-col sm:flex-row gap-6 items-start p-6 rounded-xl border border-gray-100 bg-gray-50/50">
-                <div className="w-24 h-24 shrink-0 bg-white rounded-full flex items-center justify-center text-3xl shadow-sm border border-gray-100">
-                  ✈️
-                </div>
+                <div className="relative w-24 h-24 shrink-0 bg-white rounded-full overflow-hidden shadow-sm border border-gray-100">
+  <Image
+    src="/profile.jpg"
+    alt="プロフィール画像"
+    fill
+    className="object-cover"
+    sizes="96px"
+  />
+</div>
                 <div>
                   <h3 className="text-lg font-bold text-gray-900 mb-2">ふらふら旅行記</h3>
                   <p className="text-sm text-blue-600 font-bold mb-3">Travel Analyst / 旅の検証・記録</p>
