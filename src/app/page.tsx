@@ -4,20 +4,19 @@ import Image from "next/image";
 import { Sidebar } from "@/components/Sidebar";
 import { TopSlider } from "@/components/TopSlider";
 
-// ▼▼▼ 修正: MicroCMSで新しく設定したID (mobility, stay, money) に合わせます ▼▼▼
 const CATEGORY_SECTIONS = [
   { 
-    id: "mobility", // 旧: hokuriku-tokyo
+    id: "mobility", 
     title: "移動手段を「比較・検証」する", 
     subtitle: "「安いけどしんどい」を避ける。時間・費用・疲労度を比較したルート検証。" 
   },
   { 
-    id: "stay", // 旧: hotel-tips
+    id: "stay", 
     title: "滞在の「質」を確保する", 
     subtitle: "翌日のパフォーマンスは宿で決まる。失敗しないホテルの選び方。" 
   },
   { 
-    id: "money", // 旧: cards-insurance
+    id: "money", 
     title: "旅費とマイルを「最適化」する", 
     subtitle: "価値ある使い道と、損をしない決済・運用の出口戦略。" 
   },
@@ -65,7 +64,7 @@ export default async function Home() {
                   </div>
                   <Link 
                     href={`/blog/${cat.id}`} 
-                    className="hidden sm:inline-block text-sm font-bold text-brand-600 hover:text-brand-800 transition-colors"
+                    className="hidden sm:inline-block text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors"
                   >
                     もっと見る →
                   </Link>
@@ -89,7 +88,7 @@ export default async function Home() {
                       </div>
                       
                       <div className="p-5 flex flex-col justify-center flex-grow">
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-brand-600 transition-colors leading-snug">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 transition-colors leading-snug">
                           {post.title}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
@@ -97,7 +96,7 @@ export default async function Home() {
                         </p>
                         <div className="text-xs text-gray-400 flex items-center gap-2 mt-auto">
                           <time>{new Date(post.publishedAt || post.createdAt).toLocaleDateString("ja-JP")}</time>
-                          <span className="text-brand-500 font-medium">続きを読む</span>
+                          <span className="text-blue-500 font-medium">続きを読む</span>
                         </div>
                       </div>
                     </Link>
@@ -107,7 +106,7 @@ export default async function Home() {
                 <div className="mt-4 sm:hidden text-center">
                   <Link 
                     href={`/blog/${cat.id}`} 
-                    className="inline-block w-full py-2 text-sm font-bold text-brand-600 border border-brand-200 rounded-lg bg-brand-50"
+                    className="inline-block w-full py-2 text-sm font-bold text-blue-600 border border-blue-200 rounded-lg bg-blue-50"
                   >
                     {cat.title}をもっと見る
                   </Link>
@@ -125,14 +124,15 @@ export default async function Home() {
              </p>
              <Link 
                href="/blog/all"
-               className="inline-block bg-brand-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-brand-700 hover:-translate-y-1 transition-all"
+               className="inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 hover:-translate-y-1 transition-all"
              >
                新着記事一覧へ
              </Link>
           </div>
         </div>
 
-        <Sidebar />
+        {/* サイドバーのプロフィールを非表示に */}
+        <Sidebar showProfile={false} />
       </div>
     </main>
   );

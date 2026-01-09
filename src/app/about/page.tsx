@@ -3,26 +3,29 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About - このブログについて",
+  title: "運営者情報 - このブログについて",
   description: "ふらふら旅行記のコンセプトと運営者プロフィール。",
 };
 
 export default function AboutPage() {
   return (
-    <main className="max-w-7xl mx-auto p-4 sm:p-6 bg-gray-50 text-gray-900">
-      <Breadcrumb items={[{ name: "TOP", path: "/" }, { name: "About" }]} />
+    <main className="max-w-7xl mx-auto p-4 sm:p-6 text-gray-900">
+      <Breadcrumb items={[{ name: "ホーム", path: "/" }, { name: "運営者情報" }]} />
 
       <div className="flex flex-col lg:flex-row gap-10 mt-6">
-        <div className="flex-1 min-w-0 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+        
+        <div className="flex-1 min-w-0">
           
-          <h1 className="text-3xl font-bold text-gray-900 mb-8 border-b pb-4">
-            About This Log
+          <h1 className="text-3xl font-bold text-gray-900 mb-8 pb-4 border-b border-gray-200">
+            このブログについて
           </h1>
 
           <div className="prose prose-gray max-w-none space-y-12">
             
             <section>
-              <h2 className="text-xl font-bold text-gray-800 mb-4">コンセプト：根拠で選ぶ、快適な旅。</h2>
+              <h2 className="text-xl font-bold text-gray-800 mb-4 border-l-4 border-blue-500 pl-3">
+                コンセプト：根拠で選ぶ、快適な旅。
+              </h2>
               <p className="leading-relaxed text-gray-600">
                 旅行の計画を立てるとき、こんな風に迷ったことはありませんか？
               </p>
@@ -42,20 +45,22 @@ export default function AboutPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-gray-800 mb-4">運営者について</h2>
-              <div className="flex flex-col sm:flex-row gap-6 items-start">
-                <div className="w-24 h-24 shrink-0 bg-gray-100 rounded-full flex items-center justify-center text-3xl">
+              <h2 className="text-xl font-bold text-gray-800 mb-4 border-l-4 border-blue-500 pl-3">
+                運営者について
+              </h2>
+              <div className="flex flex-col sm:flex-row gap-6 items-start p-6 rounded-xl border border-gray-100 bg-gray-50/50">
+                <div className="w-24 h-24 shrink-0 bg-white rounded-full flex items-center justify-center text-3xl shadow-sm border border-gray-100">
                   ✈️
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-gray-900 mb-2">ふらふら旅行記</h3>
-                  <p className="text-sm text-brand-600 font-bold mb-3">Travel Analyst / 旅の検証・記録</p>
-                  <p className="text-gray-600 leading-relaxed mb-4">
+                  <p className="text-sm text-blue-600 font-bold mb-3">Travel Analyst / 旅の検証・記録</p>
+                  <p className="text-gray-600 leading-relaxed mb-4 text-sm">
                     北陸を拠点に活動する、こだわり強めの旅好き。<br />
                     「なんとなく」で選んで後悔するのが嫌いで、移動手段やホテルのスペックを徹底的に調べ上げるのが趣味です。<br />
                     ANA Super Flyers Card (SFC) ホルダー。
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-xs text-gray-400">
                     ※当ブログの記事は個人の検証結果に基づくものであり、最新の運行状況やサービス内容は各公式サイトをご確認ください。
                   </p>
                 </div>
@@ -65,7 +70,8 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <Sidebar />
+        {/* プロフィールを非表示にする設定を追加 */}
+        <Sidebar showProfile={false} />
       </div>
     </main>
   );
