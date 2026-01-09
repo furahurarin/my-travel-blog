@@ -1,16 +1,14 @@
 import { MetadataRoute } from 'next';
-import { getList, getCategories } from '@/libs/microcms';
+import { getAllBlogs, getAllCategories } from '@/libs/microcms';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://furahura-travel.com';
 
-  // 1. 全記事を取得 (limitを大きくして全件取得する設定)
-  const { contents: posts } = await getList({ limit: 100 });
-  
-  // 2. 全カテゴリを取得
-  const { contents: categories } = await getCategories({ limit: 100 });
+  // ▼ 修正: 全件取得メソッドを使用（100件以上の記事に対応）
+  const posts = await getAllBlogs();
+  const categories = await getAllCategories();
 
-  // 3. 記事ページのURLを生成
+  // 記事ページのURLを生成
   const postUrls = posts.map((post) => ({
     url: `${baseUrl}/blog/${post.category?.id}/${post.id}`,
     lastModified: new Date(post.updatedAt),
@@ -18,7 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  // 4. カテゴリページのURLを生成
+  // カテゴリページのURLを生成
   const categoryUrls = categories.map((category) => ({
     url: `${baseUrl}/blog/${category.id}`,
     lastModified: new Date(),
@@ -26,7 +24,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  // 5. 静的ページと合わせて返す
   return [
     {
       url: baseUrl,

@@ -1,15 +1,12 @@
-// src/app/feed.xml/route.ts
-
-import { getList } from '@/libs/microcms';
+import { getAllBlogs } from "@/libs/microcms";
 
 export async function GET() {
-  // 全記事を取得 (limitを大きく設定)
-  const { contents: posts } = await getList({ limit: 100 });
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://furahura-travel.com';
+  // ▼ 修正: 全件取得メソッドを使用
+  const posts = await getAllBlogs();
+  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://furahura-travel.com";
 
-  // RSSのXMLを構築
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>ふらふら旅行記</title>
     <link>${siteUrl}</link>
@@ -20,18 +17,19 @@ export async function GET() {
     ${posts.map((post) => `
     <item>
       <title><![CDATA[${post.title}]]></title>
-      <link>${siteUrl}/blog/${post.category?.id || 'misc'}/${post.id}</link>
-      <guid isPermaLink="true">${siteUrl}/blog/${post.category?.id || 'misc'}/${post.id}</guid>
+      <link>${siteUrl}/blog/${post.category?.id}/${post.id}</link>
+      <guid isPermaLink="true">${siteUrl}/blog/${post.category?.id}/${post.id}</guid>
       <pubDate>${new Date(post.publishedAt || post.createdAt).toUTCString()}</pubDate>
-      <description><![CDATA[${(post.content || "").replace(/<[^>]+>/g, "").slice(0, 120)}...]]></description>
+      <description><![CDATA[${post.description || post.content.replace(/<[^>]+>/g, "").slice(0, 120)}...]]></description>
     </item>`).join('')}
   </channel>
-</rss>`;
+  </rss>`;
 
   return new Response(xml, {
     headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 's-maxage=3600, stale-while-revalidate', // 1時間キャッシュ
+      "Content-Type": "application/xml",
+      // キャッシュ制御: 1時間キャッシュ、その後再検証
+      "Cache-Control": "s-maxage=3600, stale-while-revalidate",
     },
   });
 }

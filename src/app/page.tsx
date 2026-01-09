@@ -4,7 +4,6 @@ import Image from "next/image";
 import { Sidebar } from "@/components/Sidebar";
 import { TopSlider } from "@/components/TopSlider";
 
-// ▼▼▼ あなたのMicroCMSのカテゴリIDを設定してください ▼▼▼
 const CATEGORY_SECTIONS = [
   { id: "hokuriku-tokyo", title: "北陸⇔東京の移動手段", subtitle: "新幹線・飛行機・バスを徹底比較" },
   { id: "hotel-tips", title: "賢いホテル選び", subtitle: "失敗しない宿選びと予約のコツ" },
@@ -12,10 +11,8 @@ const CATEGORY_SECTIONS = [
 ];
 
 export default async function Home() {
-  // 1. スライダー用の記事を取得（最新5件）
   const sliderData = await getList({ limit: 5 });
 
-  // 2. 各カテゴリごとの記事を並列で取得
   const categoryPostsPromises = CATEGORY_SECTIONS.map((cat) =>
     getList({
       limit: 3,
@@ -30,12 +27,10 @@ export default async function Home() {
       
       <h1 className="sr-only">ふらふら旅行記 - 北陸から東京への賢い移動と旅のノウハウ</h1>
 
-      {/* メインビジュアル：人気記事スライダー */}
       <TopSlider contents={sliderData.contents} />
 
       <div className="flex flex-col lg:flex-row gap-12">
         
-        {/* メインコンテンツエリア */}
         <div className="flex-1 space-y-16">
           
           {CATEGORY_SECTIONS.map((cat, index) => {
@@ -44,7 +39,6 @@ export default async function Home() {
 
             return (
               <section key={cat.id}>
-                {/* セクション見出し */}
                 <div className="flex items-end justify-between mb-6 pb-2 border-b border-gray-200 dark:border-gray-700">
                   <div>
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
@@ -62,7 +56,6 @@ export default async function Home() {
                   </Link>
                 </div>
 
-                {/* 記事カードリスト */}
                 <div className="space-y-6">
                   {posts.map((post) => (
                     <Link 
@@ -70,17 +63,17 @@ export default async function Home() {
                       href={`/blog/${post.category?.id}/${post.id}`}
                       className="group flex flex-col sm:flex-row bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-card-hover border border-gray-100 dark:border-slate-700 overflow-hidden transition-all duration-300"
                     >
-                      {/* サムネイル */}
                       <div className="relative w-full sm:w-48 h-48 sm:h-auto shrink-0 overflow-hidden">
                         <Image
                           src={post.eyecatch?.url ?? "/no-image.png"}
                           alt={post.title}
                           fill
+                          // ▼ 追加: モバイルは全幅、PCは固定幅(約200px)であることをブラウザに伝える
+                          sizes="(max-width: 640px) 100vw, 200px"
                           className="object-cover transition-transform duration-500 group-hover:scale-110"
                         />
                       </div>
                       
-                      {/* テキスト情報 */}
                       <div className="p-5 flex flex-col justify-center flex-grow">
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-brand-600 transition-colors leading-snug">
                           {post.title}
@@ -89,7 +82,6 @@ export default async function Home() {
                           {post.content.replace(/<[^>]+>/g, "").slice(0, 60)}...
                         </p>
                         <div className="text-xs text-gray-400 flex items-center gap-2 mt-auto">
-                          {/* ▼▼▼ 修正: publishedAtが無い場合はcreatedAtを使う安全策を追加 ▼▼▼ */}
                           <time>{new Date(post.publishedAt || post.createdAt).toLocaleDateString("ja-JP")}</time>
                           <span className="text-brand-500 font-medium">続きを読む</span>
                         </div>
@@ -98,7 +90,6 @@ export default async function Home() {
                   ))}
                 </div>
 
-                {/* スマホ用「もっと見る」ボタン */}
                 <div className="mt-4 sm:hidden text-center">
                   <Link 
                     href={`/blog/${cat.id}`} 
@@ -111,7 +102,6 @@ export default async function Home() {
             );
           })}
 
-          {/* 全記事一覧へのリンク */}
           <div className="p-8 bg-gray-50 dark:bg-slate-900 rounded-2xl text-center border border-dashed border-gray-300 dark:border-gray-700">
              <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">
                もっと記事を探す
@@ -128,7 +118,6 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* サイドバー */}
         <Sidebar />
       </div>
     </main>

@@ -33,7 +33,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
 }
 
 export async function generateStaticParams() {
-  const { contents } = await getList();
+  // ▼ 修正: limitを1000件（または最大予測数）に設定し、古い記事が404になるのを防ぐ
+  const { contents } = await getList({ limit: 1000 });
   return contents.filter((post) => post.category).map((post) => ({ categoryId: post.category!.id, id: post.id }));
 }
 
@@ -97,7 +98,7 @@ export default async function BlogPost({ params, searchParams }: Props) {
   // 404判定
   if (!post || (!draftKey && post.category?.id !== categoryId)) notFound();
 
-  // 関連記事の取得（手動設定がない場合のみ自動取得）
+  // 関連記事の取得
   let relatedPosts = post.related_posts || [];
   if (relatedPosts.length === 0) {
     const { contents } = await getList({
@@ -107,12 +108,12 @@ export default async function BlogPost({ params, searchParams }: Props) {
     relatedPosts = contents;
   }
 
-  // 本文ソースの統合（目次生成用）
+  // 本文ソースの統合
   const rawContent = post.body && post.body.length > 0 
     ? post.body.map(block => block.fieldId === 'richText' ? block.richText : '').join('')
     : post.content || '';
 
-  // 目次の生成と本文へのID付与
+  // 目次の生成
   const $ = cheerio.load(rawContent);
   const headings = $("h2, h3").toArray();
   const toc = headings.map((data, i) => {
@@ -122,11 +123,32 @@ export default async function BlogPost({ params, searchParams }: Props) {
     return { text, id: headingId, tag: data.tagName };
   });
 
-  // 日付の確定（公開日がない場合は作成日を使用）
+  // 日付の確定
   const publishDate = post.publishedAt || post.createdAt;
+
+  // ▼ 追加: SEO用 JSON-LD (構造化データ)
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    image: post.eyecatch ? [post.eyecatch.url] : [],
+    datePublished: publishDate,
+    dateModified: post.updatedAt,
+    author: {
+      '@type': 'Person',
+      name: 'ふらふら旅行記', // サイト運営者名または著者を設定
+    },
+    description: post.description || post.content.replace(/<[^>]+>/g, "").slice(0, 120) + "...",
+  };
 
   return (
     <main className="max-w-7xl mx-auto p-4 sm:p-6 bg-gray-50 text-gray-900">
+      {/* ▼ 追加: 構造化データの埋め込み */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <Breadcrumb 
         items={[
           { name: "TOP", path: "/" }, 
@@ -146,7 +168,6 @@ export default async function BlogPost({ params, searchParams }: Props) {
             <ShareButtons title={post.title} id={post.id} categoryId={post.category?.id} />
           </div>
           
-          {/* 広告表示設定がONの場合のみ表示 */}
           {post.show_ads !== false && <AffiliateDisclosure />}
 
           {post.eyecatch && (
@@ -155,20 +176,20 @@ export default async function BlogPost({ params, searchParams }: Props) {
                 src={post.eyecatch.url} 
                 alt={post.title} 
                 fill 
-                className="object-cover" 
-                priority 
+                className="object-cover"
+                priority
+                // ▼ 追加: 適切な画像サイズを指定して読み込み負荷を軽減
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
               />
             </div>
           )}
           
-          {/* モバイル用目次 */}
           {toc.length > 0 && (
             <div className="lg:hidden mb-10">
               <TableOfContents toc={toc} />
             </div>
           )}
 
-          {/* 本文表示エリア */}
           <div className="mt-8">
             {post.body && post.body.length > 0 ? (
               post.body.map((block, index) => {
@@ -176,7 +197,6 @@ export default async function BlogPost({ params, searchParams }: Props) {
                   case "richText":
                     return (
                       <div key={index} className="prose prose-lg max-w-none text-gray-800 mb-8">
-                        {/* parse() を使用してHTMLタグをReact要素として展開 */}
                         {parse(block.richText)}
                       </div>
                     );
@@ -210,7 +230,6 @@ export default async function BlogPost({ params, searchParams }: Props) {
                 }
               })
             ) : (
-              // 旧エディタ形式のフォールバック
               <div className="prose prose-lg max-w-none text-gray-800">
                 {parse(post.content || "")}
               </div>
@@ -227,7 +246,6 @@ export default async function BlogPost({ params, searchParams }: Props) {
 
         <aside className="w-full lg:w-80 flex flex-col gap-8">
           <Sidebar />
-          {/* デスクトップ用目次 */}
           {toc.length > 0 && (
             <div className="hidden lg:block sticky top-24">
               <TableOfContents toc={toc} />

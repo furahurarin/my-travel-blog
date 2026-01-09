@@ -1,11 +1,10 @@
-// src/components/TopSlider.tsx
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Autoplay, EffectFade } from "swiper/modules";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-import "swiper/css/effect-fade";
+import "swiper/css/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Blog } from "@/libs/microcms";
@@ -15,72 +14,63 @@ type Props = {
 };
 
 export const TopSlider = ({ contents }: Props) => {
-  if (contents.length === 0) return null;
+  if (!contents || contents.length === 0) return null;
 
   return (
-    <div className="mb-12 relative group">
+    <div className="w-full mb-12 relative group">
       <Swiper
-        modules={[Pagination, Autoplay, EffectFade]}
-        spaceBetween={0}
+        modules={[Autoplay, Pagination, Navigation]}
+        spaceBetween={20}
         slidesPerView={1}
-        effect="fade"
-        pagination={{ 
-          clickable: true,
-          bulletClass: 'swiper-pagination-bullet bg-white opacity-50',
-          bulletActiveClass: 'swiper-pagination-bullet-active !bg-white !opacity-100'
-        }}
-        autoplay={{ delay: 5000, disableOnInteraction: false }}
+        pagination={{ clickable: true }}
+        navigation
         loop={true}
-        className="w-full h-[400px] sm:h-[500px] rounded-2xl overflow-hidden shadow-xl"
+        autoplay={{ delay: 5000, disableOnInteraction: false }}
+        className="rounded-2xl overflow-hidden shadow-2xl"
       >
-        {contents.map((post) => (
-          <SwiperSlide key={post.id} className="relative w-full h-full">
-            <Link href={`/blog/${post.category?.id}/${post.id}`} className="block w-full h-full relative">
-              
-              {/* 背景画像 */}
-              <div className="absolute inset-0">
+        {contents.map((post, index) => (
+          <SwiperSlide key={post.id}>
+            <div className="relative w-full h-[400px] md:h-[500px]">
+              <Link href={`/blog/${post.category?.id}/${post.id}`} className="block w-full h-full relative">
                 <Image
                   src={post.eyecatch?.url ?? "/no-image.png"}
                   alt={post.title}
                   fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  priority
+                  // ▼ 修正: LCP対策。1枚目だけ優先読み込み(priority)、sizesで適切なサイズ指定
+                  priority={index === 0}
+                  sizes="(max-width: 768px) 100vw, 1200px"
+                  className="object-cover"
                 />
                 {/* グラデーションオーバーレイ */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-              </div>
-
-              {/* テキストコンテンツ */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-12 text-white z-10">
-                <div className="max-w-3xl">
-                  {post.category && (
-                    <span className="inline-block bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 shadow-sm">
-                      {post.category.name}
-                    </span>
-                  )}
-                  <h2 className="text-2xl sm:text-4xl font-bold leading-tight mb-3 drop-shadow-md">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                
+                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 text-white z-10">
+                  <span className="inline-block px-3 py-1 mb-3 text-xs font-bold bg-brand-600 rounded-full">
+                    {post.category?.name}
+                  </span>
+                  <h2 className="text-2xl md:text-4xl font-bold leading-tight mb-2 drop-shadow-md">
                     {post.title}
                   </h2>
                   <div className="mt-3 text-sm text-gray-200 font-medium flex items-center gap-2">
-                    {/* ▼▼▼ 修正: publishedAt が undefined の場合は createdAt を使用 ▼▼▼ */}
                     <time>{new Date(post.publishedAt || post.createdAt).toLocaleDateString("ja-JP")}</time>
                     <span>|</span>
                     <span>詳細を見る →</span>
                   </div>
                 </div>
-              </div>
-
-            </Link>
+              </Link>
+            </div>
           </SwiperSlide>
         ))}
       </Swiper>
       
-      {/* カスタムCSS用スタイル（ページネーション位置調整など） */}
+      {/* カスタムスタイル: ページネーションの色などを調整する場合 */}
       <style jsx global>{`
-        .swiper-pagination {
-          bottom: 24px !important;
-          text-align: right !important;
-          padding-right: 32px;
+        .swiper-pagination-bullet-active {
+          background-color: #2563eb !important;
+        }
+        .swiper-button-next, .swiper-button-prev {
+          color: white !important;
+          text-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
       `}</style>
     </div>

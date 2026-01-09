@@ -1,5 +1,3 @@
-// src/libs/microcms.ts
-
 import { createClient, MicroCMSQueries, MicroCMSImage, MicroCMSDate } from "microcms-js-sdk";
 
 // クライアント初期化
@@ -17,7 +15,6 @@ export const client = createClient({
 });
 
 // ▼ 繰り返しフィールド（body）の各ブロックの型
-// ※ここはカスタムフィールドIDと一致させる必要があります
 export type BodyBlock =
   | {
       fieldId: "richText";
@@ -50,39 +47,22 @@ export type Blog = {
   id: string;
   title: string;
   eyecatch?: MicroCMSImage;
-  
-  // ★重要: MicroCMSのスキーマ設定が「category」なのでここは単数形
   category?: Category;
-
-  // 本文（新・旧）
   body?: BodyBlock[];
   content: string;
-
-  // SEO
   description?: string;
-
-  // 関連記事・フラグ
   related_posts?: Blog[];
   is_recommended?: boolean;
-
-  // 広告制御
   show_ads?: boolean;
-
 } & MicroCMSDate;
 
-// ▼ レスポンス型（必要に応じて使用）
-export type ArticleListResponse = {
-  totalCount: number;
-  offset: number;
-  limit: number;
-  contents: Blog[];
-};
-
-export type CategoryResponse = {
-  totalCount: number;
-  offset: number;
-  limit: number;
-  contents: Category[];
+// ▼ 通常の一覧取得（ページネーション付き）
+export const getList = async (queries?: MicroCMSQueries) => {
+  const listData = await client.getList<Blog>({
+    endpoint: "blogs",
+    queries,
+  });
+  return listData;
 };
 
 // ▼ 詳細取得
@@ -91,27 +71,35 @@ export const getDetail = async (
   queries?: MicroCMSQueries
 ) => {
   const detailData = await client.getListDetail<Blog>({
-    endpoint: "blogs", // ★ここを "blogs" に設定
+    endpoint: "blogs",
     contentId,
     queries,
   });
   return detailData;
 };
 
-// ▼ 一覧取得
-export const getList = async (queries?: MicroCMSQueries) => {
-  const listData = await client.getList<Blog>({
-    endpoint: "blogs", // ★ここを "blogs" に設定
+// ▼ カテゴリ一覧取得
+export const getCategories = async (queries?: MicroCMSQueries) => {
+  const listData = await client.getList<Category>({
+    endpoint: "categories",
     queries,
   });
   return listData;
 };
 
-// ▼ カテゴリ一覧取得
-export const getCategories = async (queries?: MicroCMSQueries) => {
-  const listData = await client.getList<Category>({
-    endpoint: "categories", // ★ここを "categories" に設定
-    queries,
+// ▼▼▼ 追加: 記事の全件取得（100件制限突破用） ▼▼▼
+// サイトマップ、RSS、generateStaticParamsで使用
+export const getAllBlogs = async () => {
+  const allData = await client.getAllContents<Blog>({
+    endpoint: "blogs",
   });
-  return listData;
+  return allData;
+};
+
+// ▼▼▼ 追加: カテゴリの全件取得 ▼▼▼
+export const getAllCategories = async () => {
+  const allData = await client.getAllContents<Category>({
+    endpoint: "categories",
+  });
+  return allData;
 };
