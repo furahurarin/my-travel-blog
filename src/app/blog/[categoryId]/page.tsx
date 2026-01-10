@@ -99,13 +99,13 @@ export default async function CategoryPage({ params }: Props) {
               posts.map((post) => (
                 <Link 
                   key={post.id} 
-                  href={`/blog/${post.category?.id}/${post.id}`}
+                  href={`/blog/${post.category?.id ?? "uncategorized"}/${post.id}`}
                   className="group flex flex-col sm:flex-row bg-white rounded-xl shadow-sm hover:shadow-card-hover border border-gray-100 overflow-hidden transition-all duration-300"
                 >
                   <div className="relative w-full sm:w-64 h-48 sm:h-auto shrink-0">
                     <Image
                       src={post.eyecatch?.url ?? "/no-image.png"}
-                      alt={post.title}
+                      alt={post.eyecatch?.url ? post.title : ""}
                       fill
                       sizes="(max-width: 640px) 100vw, 300px"
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -116,7 +116,8 @@ export default async function CategoryPage({ params }: Props) {
                       {post.title}
                     </h2>
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                      {post.content.replace(/<[^>]+>/g, "").slice(0, 80)}...
+                      {/* ▼▼▼ 修正箇所: contentがない場合に備えて || "" を追加 ▼▼▼ */}
+                      {(post.content || "").replace(/<[^>]+>/g, "").slice(0, 80)}...
                     </p>
                     <time className="text-xs text-gray-400 mt-auto">
                       {new Date(post.publishedAt || post.createdAt).toLocaleDateString("ja-JP")}
