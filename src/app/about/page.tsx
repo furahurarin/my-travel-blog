@@ -1,6 +1,6 @@
 import { Sidebar } from "@/components/Sidebar";
 import { Breadcrumb } from "@/components/Breadcrumb";
-import { UserProfile } from "@/components/UserProfile"; // 追加
+import Image from "next/image"; // 画像用にインポートを追加
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -23,6 +23,7 @@ export default function AboutPage() {
 
           <div className="prose prose-gray max-w-none space-y-12">
             
+            {/* コンセプトセクション */}
             <section>
               <h2 className="text-xl font-bold text-gray-800 mb-4 border-l-4 border-blue-500 pl-3">
                 コンセプト：根拠で選ぶ、快適な旅。
@@ -45,18 +46,42 @@ export default function AboutPage() {
               </p>
             </section>
 
+            {/* 運営者プロフィールセクション（画像の修正を含む） */}
             <section>
               <h2 className="text-xl font-bold text-gray-800 mb-4 border-l-4 border-blue-500 pl-3">
                 運営者について
               </h2>
-              {/* ▼▼▼ 修正: コンポーネント化して統一 ▼▼▼ */}
-              <UserProfile isDetail={true} />
+              
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 bg-gray-50 p-6 rounded-xl border border-gray-100">
+                {/* ▼▼▼ 画像修正箇所: アスペクト比と位置ズレを防ぐ設定 ▼▼▼ */}
+                <div className="relative w-32 h-32 shrink-0 overflow-hidden rounded-full border-4 border-white shadow-md bg-white">
+                  <Image
+                    src="/profile.png" // 拡張子をpngに修正
+                    alt="ふらふら旅行記・運営者"
+                    fill
+                    className="object-cover object-center" // 画像を枠いっぱいに広げ、中心を合わせる
+                    sizes="(max-width: 640px) 128px, 128px"
+                    priority
+                  />
+                </div>
+                {/* ▲▲▲ 修正ここまで ▲▲▲ */}
+
+                <div className="flex-1 text-center sm:text-left">
+                  <p className="font-bold text-lg text-gray-900 mb-1">ふらふら旅行記</p>
+                  <p className="text-sm text-blue-600 font-bold mb-3">Travel Analyst / 旅の検証</p>
+                  <p className="text-gray-600 text-sm leading-relaxed text-justify">
+                    北陸拠点。移動と宿を中心に、旅の満足度を上げる方法を数字と条件で検証しています。
+                    ただの感想だけでなく、時間・費用・疲労などの「判断材料」を残すのが方針です。
+                    失敗しないホテル選びや、損をしないマイルの使い方も発信中。
+                  </p>
+                </div>
+              </div>
             </section>
 
           </div>
         </div>
 
-        {/* プロフィールを非表示にする設定 */}
+        {/* サイドバー（プロフィールはメインコンテンツにあるので非表示） */}
         <Sidebar showProfile={false} />
       </div>
     </main>
