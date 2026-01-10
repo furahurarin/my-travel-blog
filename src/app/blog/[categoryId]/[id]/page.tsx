@@ -28,7 +28,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const post = await getDetail(id, { draftKey }).catch(() => null);
   if (!post) return {};
   
-  const descText = post.description || post.content.replace(/<[^>]+>/g, "").slice(0, 120) + "...";
+  // ▼ 修正: post.content が undefined の場合に空文字を使うように変更
+  const descText = post.description || (post.content || "").replace(/<[^>]+>/g, "").slice(0, 120) + "...";
 
   return {
     title: post.title,
@@ -150,7 +151,8 @@ export default async function BlogPost({ params, searchParams }: Props) {
       '@type': 'Person',
       name: 'ふらふら旅行記',
     },
-    description: post.description || post.content.replace(/<[^>]+>/g, "").slice(0, 120) + "...",
+    // ▼ 修正: post.content が undefined の場合に空文字を使うように変更
+    description: post.description || (post.content || "").replace(/<[^>]+>/g, "").slice(0, 120) + "...",
   };
 
   return (
