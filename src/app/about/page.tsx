@@ -1,7 +1,7 @@
 import { Sidebar } from "@/components/Sidebar";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { UserProfile } from "@/components/UserProfile"; // 追加
 import type { Metadata } from "next";
-import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "運営者情報 - このブログについて",
@@ -49,35 +49,14 @@ export default function AboutPage() {
               <h2 className="text-xl font-bold text-gray-800 mb-4 border-l-4 border-blue-500 pl-3">
                 運営者について
               </h2>
-              <div className="flex flex-col sm:flex-row gap-6 items-start p-6 rounded-xl border border-gray-100 bg-gray-50/50">
-                <div className="relative w-24 h-24 shrink-0 bg-white rounded-full overflow-hidden shadow-sm border border-gray-100">
-  <Image
-    src="/profile.png"
-    alt="プロフィール画像"
-    fill
-    className="object-cover"
-    sizes="96px"
-  />
-</div>
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">ふらふら旅行記</h3>
-                  <p className="text-sm text-blue-600 font-bold mb-3">Travel Analyst / 旅の検証・記録</p>
-                  <p className="text-gray-600 leading-relaxed mb-4 text-sm">
-                    北陸を拠点に活動する、こだわり強めの旅好き。<br />
-                    「なんとなく」で選んで後悔するのが嫌いで、移動手段やホテルのスペックを徹底的に調べ上げるのが趣味です。<br />
-                    ANA Super Flyers Card (SFC) ホルダー。
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    ※当ブログの記事は個人の検証結果に基づくものであり、最新の運行状況やサービス内容は各公式サイトをご確認ください。
-                  </p>
-                </div>
-              </div>
+              {/* ▼▼▼ 修正: コンポーネント化して統一 ▼▼▼ */}
+              <UserProfile isDetail={true} />
             </section>
 
           </div>
         </div>
 
-        {/* プロフィールを非表示にする設定を追加 */}
+        {/* プロフィールを非表示にする設定 */}
         <Sidebar showProfile={false} />
       </div>
     </main>

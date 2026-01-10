@@ -2,6 +2,7 @@ import { getList, getAllCategories } from "@/libs/microcms";
 import Link from "next/link";
 import Image from "next/image";
 import { SearchField } from "./SearchField";
+import { UserProfile } from "./UserProfile"; // 追加
 
 type SidebarProps = {
   showProfile?: boolean; // プロフィールを表示するかどうかのフラグ (省略時はtrue)
@@ -11,21 +12,16 @@ export const Sidebar = async ({ showProfile = true }: SidebarProps) => {
   const { contents: newPosts } = await getList({ limit: 5 });
   const categories = await getAllCategories();
 
-  // ▼▼▼ 修正: カテゴリの表示順序を定義して並び替え ▼▼▼
+  // カテゴリの表示順序を定義
   const categoryOrder = ["mobility", "stay", "money", "column"];
   
   const sortedCategories = [...categories].sort((a, b) => {
     const indexA = categoryOrder.indexOf(a.id);
     const indexB = categoryOrder.indexOf(b.id);
     
-    // 両方とも定義リストにある場合、その順序に従う
     if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-    
-    // 定義リストにあるものを優先して上に表示
     if (indexA !== -1) return -1;
     if (indexB !== -1) return 1;
-    
-    // どちらもリストにない場合は元の順序を維持
     return 0;
   });
 
@@ -34,35 +30,8 @@ export const Sidebar = async ({ showProfile = true }: SidebarProps) => {
       {/* 1. プロフィールブロック (showProfileがtrueの時だけ表示) */}
       {showProfile && (
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="relative w-16 h-16 overflow-hidden rounded-full border-2 border-gray-100 bg-gray-50">
-  <Image
-    src="/profile.png"
-    alt="プロフィール画像"
-    fill
-    className="object-cover"
-    sizes="64px"
-  />
-</div>
-            <div>
-              <p className="font-bold text-gray-900">ふらふら旅行記</p>
-              <p className="text-xs text-gray-500">Travel Analyst / 旅の検証</p>
-            </div>
-          </div>
-          
-          <div className="text-sm text-gray-600 leading-relaxed mb-4 text-justify">
-            <p className="mb-3">
-              「100円の安さ」よりも、「1時間の快適さ」を大切にしたい。
-            </p>
-            <p>
-              北陸拠点。移動と宿を中心に、旅の満足度を上げる方法を数字と条件で検証しています。
-              感想だけでなく、時間・費用・疲労などの判断材料を残すのが方針です。
-            </p>
-          </div>
-
-          <Link href="/about" className="text-xs font-bold text-blue-600 hover:underline">
-            詳しいプロフィール →
-          </Link>
+          {/* ▼▼▼ 修正: コンポーネント化して統一 ▼▼▼ */}
+          <UserProfile isDetail={false} />
         </div>
       )}
 

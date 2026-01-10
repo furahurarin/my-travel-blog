@@ -101,7 +101,8 @@ export default async function Home() {
                           {post.title}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
-                          {post.content.replace(/<[^>]+>/g, "").slice(0, 60)}...
+                          {/* ▼▼▼ 修正箇所: contentがない場合に備えて || "" を追加 ▼▼▼ */}
+                          {(post.content || "").replace(/<[^>]+>/g, "").slice(0, 60)}...
                         </p>
                         <div className="text-xs text-gray-400 flex items-center gap-2 mt-auto">
                           <time>{new Date(post.publishedAt || post.createdAt).toLocaleDateString("ja-JP")}</time>
