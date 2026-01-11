@@ -21,7 +21,6 @@ type Props = {
   searchParams: Promise<{ draftKey?: string }>;
 };
 
-// ... (generateMetadata は変更なし) ...
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { id } = await params;
   const { draftKey } = await searchParams;
@@ -48,8 +47,6 @@ export async function generateStaticParams() {
     id: post.id 
   }));
 }
-
-// ... (以下、カスタムフィールド用コンポーネントや BlogPost 関数などは変更なし) ...
 
 // --- カスタムフィールド用レンダリングコンポーネント ---
 
@@ -121,20 +118,47 @@ export default async function BlogPost({ params, searchParams }: Props) {
     relatedPosts = contents;
   }
 
-  // 本文ソースの統合
-  const rawContent = post.body && post.body.length > 0 
-    ? post.body.map(block => block.fieldId === 'richText' ? block.richText : '').join('')
-    : post.content || '';
+  // --- 目次の生成とHTMLへのID埋め込み処理 ---
+  // 目次リンクが機能するためには、表示するHTMLのh2/h3タグにid属性が必要です。
+  // ここでcheerioを使って本文を解析し、IDを付与した新しいHTMLと目次データを作成します。
 
-  // 目次の生成
-  const $ = cheerio.load(rawContent);
-  const headings = $("h2, h3").toArray();
-  const toc = headings.map((data, i) => {
-    const text = $(data).text();
-    const headingId = `heading-${i}`;
-    $(data).attr("id", headingId);
-    return { text, id: headingId, tag: data.tagName };
+  const toc: { text: string; id: string; tag: string }[] = [];
+  let headingIndex = 0;
+
+  // 1. post.body (カスタムフィールド構成) がある場合の処理
+  // richTextフィールド内の見出しを検出し、IDを埋め込んだHTMLに差し替えます
+  const processedBody = post.body?.map((block) => {
+    if (block.fieldId === 'richText') {
+      const $ = cheerio.load(block.richText, null, false); // bodyのみパース
+      $('h2, h3').each((_, el) => {
+        const $el = $(el);
+        const text = $el.text();
+        const headingId = `heading-${headingIndex}`;
+        $el.attr('id', headingId); // HTMLにID属性を追加
+        toc.push({ text, id: headingId, tag: el.tagName });
+        headingIndex++;
+      });
+      // IDが付与されたHTMLで更新
+      return { ...block, richText: $.html() };
+    }
+    return block;
   });
+
+  // 2. post.content (レガシーエディタ/HTML記述) がある場合の処理
+  // post.bodyがない場合、こちらを解析します
+  let processedContent = post.content || '';
+  if ((!post.body || post.body.length === 0) && processedContent) {
+    const $ = cheerio.load(processedContent, null, false);
+    $('h2, h3').each((_, el) => {
+      const $el = $(el);
+      const text = $el.text();
+      const headingId = `heading-${headingIndex}`;
+      $el.attr('id', headingId);
+      toc.push({ text, id: headingId, tag: el.tagName });
+      headingIndex++;
+    });
+    processedContent = $.html();
+  }
 
   // 日付の確定
   const publishDate = post.publishedAt || post.createdAt;
@@ -203,12 +227,14 @@ export default async function BlogPost({ params, searchParams }: Props) {
           )}
 
           <div className="mt-8">
-            {post.body && post.body.length > 0 ? (
-              post.body.map((block, index) => {
+            {/* ▼ 修正: ID埋め込み済みの processedBody または processedContent を使用してレンダリング */}
+            {processedBody && processedBody.length > 0 ? (
+              processedBody.map((block, index) => {
                 switch (block.fieldId) {
                   case "richText":
                     return (
                       <div key={index} className="prose prose-lg max-w-none text-gray-800 mb-8">
+                        {/* IDが付与されたHTMLをパースして表示 */}
                         {parse(block.richText)}
                       </div>
                     );
@@ -243,7 +269,7 @@ export default async function BlogPost({ params, searchParams }: Props) {
               })
             ) : (
               <div className="prose prose-lg max-w-none text-gray-800">
-                {parse(post.content || "")}
+                {parse(processedContent)}
               </div>
             )}
           </div>
