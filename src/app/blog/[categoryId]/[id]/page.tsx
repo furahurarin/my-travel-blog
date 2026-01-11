@@ -1,4 +1,3 @@
-// ▼ 修正1: getAllBlogs をインポートに追加
 import { getDetail, getList, getAllBlogs, type Blog, type BodyBlock } from "@/libs/microcms";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { RelatedPosts } from "@/components/RelatedPosts";
@@ -27,7 +26,6 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const post = await getDetail(id, { draftKey }).catch(() => null);
   if (!post) return {};
   
-  // ▼ 修正: post.content が undefined の場合に空文字を使うように変更
   const descText = post.description || (post.content || "").replace(/<[^>]+>/g, "").slice(0, 120) + "...";
 
   return {
@@ -38,8 +36,6 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
 }
 
 export async function generateStaticParams() {
-  // ▼ 修正2: getList({ limit: 1000 }) はエラーになるため、全件取得用関数 getAllBlogs() を使用
-  // getAllBlogs は { contents: [] } ではなく、配列そのもの [] を返します
   const contents = await getAllBlogs();
   
   return contents.filter((post) => post.category).map((post) => ({ 
@@ -76,19 +72,22 @@ const RenderLinkButton = ({ url, label, color }: { url: string; label: string; c
   );
 };
 
+// ▼ 修正: タイトル文字（POINT/MEMO/注意）を削除し、枠線のみ維持
 const RenderPointBox = ({ content, type }: { content: string; type: string[] }) => {
   const typeKey = type?.[0] || "info";
-  const styles: Record<string, { wrapper: string; title: string }> = {
-    info: { wrapper: "bg-slate-50 border-slate-500", title: "MEMO" },
-    alert: { wrapper: "bg-red-50 border-red-600", title: "注意" },
-    check: { wrapper: "bg-emerald-50 border-emerald-600", title: "POINT" },
+  
+  // タイトル定義を削除し、枠のスタイルのみ定義
+  const styles: Record<string, string> = {
+    info: "bg-slate-50 border-slate-500",
+    alert: "bg-red-50 border-red-600",
+    check: "bg-emerald-50 border-emerald-600",
   };
-  const style = styles[typeKey] || styles.info;
+  const wrapperStyle = styles[typeKey] || styles.info;
 
   return (
-    <div className={`my-8 p-5 border-l-4 rounded-r-md ${style.wrapper}`}>
-      <div className="font-bold text-sm text-gray-700 mb-2 uppercase tracking-wider">{style.title}</div>
-      <div className="prose prose-sm max-w-none text-gray-800">{parse(content)}</div>
+    <div className={`my-8 p-5 border-l-4 rounded-r-md ${wrapperStyle}`}>
+      {/* タイトル表示部分を削除しました */}
+      <div className="prose prose-sm max-w-none text-gray-800">{parse(content || "")}</div>
     </div>
   );
 };
@@ -119,33 +118,27 @@ export default async function BlogPost({ params, searchParams }: Props) {
   }
 
   // --- 目次の生成とHTMLへのID埋め込み処理 ---
-  // 目次リンクが機能するためには、表示するHTMLのh2/h3タグにid属性が必要です。
-  // ここでcheerioを使って本文を解析し、IDを付与した新しいHTMLと目次データを作成します。
-
   const toc: { text: string; id: string; tag: string }[] = [];
   let headingIndex = 0;
 
   // 1. post.body (カスタムフィールド構成) がある場合の処理
-  // richTextフィールド内の見出しを検出し、IDを埋め込んだHTMLに差し替えます
   const processedBody = post.body?.map((block) => {
     if (block.fieldId === 'richText') {
-      const $ = cheerio.load(block.richText, null, false); // bodyのみパース
+      const $ = cheerio.load(block.richText, null, false);
       $('h2, h3').each((_, el) => {
         const $el = $(el);
         const text = $el.text();
         const headingId = `heading-${headingIndex}`;
-        $el.attr('id', headingId); // HTMLにID属性を追加
+        $el.attr('id', headingId);
         toc.push({ text, id: headingId, tag: el.tagName });
         headingIndex++;
       });
-      // IDが付与されたHTMLで更新
       return { ...block, richText: $.html() };
     }
     return block;
   });
 
   // 2. post.content (レガシーエディタ/HTML記述) がある場合の処理
-  // post.bodyがない場合、こちらを解析します
   let processedContent = post.content || '';
   if ((!post.body || post.body.length === 0) && processedContent) {
     const $ = cheerio.load(processedContent, null, false);
@@ -163,7 +156,7 @@ export default async function BlogPost({ params, searchParams }: Props) {
   // 日付の確定
   const publishDate = post.publishedAt || post.createdAt;
 
-  // ▼ 追加: SEO用 JSON-LD (構造化データ)
+  // SEO用 JSON-LD
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -175,7 +168,6 @@ export default async function BlogPost({ params, searchParams }: Props) {
       '@type': 'Person',
       name: 'ふらふら旅行記',
     },
-    // ▼ 修正: post.content が undefined の場合に空文字を使うように変更
     description: post.description || (post.content || "").replace(/<[^>]+>/g, "").slice(0, 120) + "...",
   };
 
@@ -227,14 +219,12 @@ export default async function BlogPost({ params, searchParams }: Props) {
           )}
 
           <div className="mt-8">
-            {/* ▼ 修正: ID埋め込み済みの processedBody または processedContent を使用してレンダリング */}
             {processedBody && processedBody.length > 0 ? (
               processedBody.map((block, index) => {
                 switch (block.fieldId) {
                   case "richText":
                     return (
                       <div key={index} className="prose prose-lg max-w-none text-gray-800 mb-8">
-                        {/* IDが付与されたHTMLをパースして表示 */}
                         {parse(block.richText)}
                       </div>
                     );
