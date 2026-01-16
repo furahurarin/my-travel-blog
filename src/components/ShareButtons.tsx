@@ -9,7 +9,7 @@ type Props = {
 };
 
 export const ShareButtons = ({ title, id, categoryId }: Props) => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://furahura-travel.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.furahura-travel.com";
   const url = `${baseUrl}/blog/${categoryId ?? "misc"}/${id}`;
 
   const [isCopied, setIsCopied] = useState(false);

@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://furahura-travel.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://www.furahura-travel.com'),
   title: {
     template: '%s | ふらふら旅行記',
     default: 'ふらふら旅行記｜移動と滞在の「最適解」を検証する旅ログ',

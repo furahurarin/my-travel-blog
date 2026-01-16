@@ -18,7 +18,7 @@ export const Breadcrumb = ({ items }: Props) => {
       "@type": "ListItem",
       "position": index + 1,
       "name": item.name,
-      "item": item.path ? `${process.env.NEXT_PUBLIC_BASE_URL || 'https://furahura-travel.com'}${item.path}` : undefined,
+      "item": item.path ? `${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.furahura-travel.com'}${item.path}` : undefined,
     })),
   };
 

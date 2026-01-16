@@ -3,7 +3,7 @@ import { getAllBlogs } from "@/libs/microcms";
 export async function GET() {
   // ▼ 修正: 全件取得メソッドを使用
   const posts = await getAllBlogs();
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://furahura-travel.com";
+  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.furahura-travel.com";
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
   <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
